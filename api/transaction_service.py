@@ -98,15 +98,15 @@ def getaddress():
         address = str(re.sub(r'\W+', '', request.form['addr'] ) ) #check alphanumeric
     except ValueError:
         abort(make_response('This endpoint only consumes valid input', 400))
-
+    print ">>> 1"
     ROWS=dbSelect("""select t.TxHash, t.TxType, t.TxRecvTime, t.TxState,
                             atx.AddressRole, atx.BalanceAvailableCreditDebit,
                             sp.PropertyData
-                      from transactions t, addressesintxs atx, smartproperties sp
+                      from transactions as t, addressesintxs atx, smartproperties sp
                       where t.txdbserialnum = atx.txdbserialnum and sp.PropertyID = atx.PropertyID and atx.address=%s and t.txdbserialnum >0
                       and sp.Protocol != 'Fiat'
                       order by t.txdbserialnum DESC""", [address])
-
+    print ">>> 2"
     transactions = []
 
     if len(ROWS) > 0:
@@ -143,9 +143,7 @@ def getcurrencyrecent():
     #else: c_id = lookup_currency[ c_symbol ]
 
     #Do we even need per-currency pagination?
-    ROWS=dbSelect("select t.txhash,t.protocol,t.txdbserialnum,t.txtype,t.txversion,t.ecosystem,t.txrecvtime,t.txstate,t.txerrorcode,"
-                  "t.txblocknumber,t.txseqinblock,txj.txdbserialnum,txj.protocol,txj.txdata "
-                  "from transactions t, txjson txj where t.protocol != 'Bitcoin' and t.txdbserialnum = txj.txdbserialnum order by t.txblocknumber DESC limit 10;")
+    ROWS=dbSelect("select t.txhash,t.protocol,t.txdbserialnum,t.txtype,t.txversion,t.ecosystem,t.txrecvtime,t.txstate,t.txerrorcode,t.txblocknumber,t.txseqinblock,txj.txdbserialnum,txj.protocol,txj.txdata from transactions as t, txjson as txj where t.protocol != 'Bitcoin' and t.txdbserialnum = txj.txdbserialnum order by t.txblocknumber DESC limit 10;")
 
     response = []
     if len(ROWS) > 0:
@@ -165,10 +163,8 @@ def gettransaction(hash_id):
         transaction_ = str(re.sub(r'\W+', '', hash_id.split('.')[0] ) ) #check alphanumeric
     except ValueError:
         abort(make_response('This endpoint only consumes valid input', 400))
-
-    ROWS=dbSelect("select t.txhash,t.protocol,t.txdbserialnum,t.txtype,t.txversion,t.ecosystem,t.txrecvtime,t.txstate,t.txerrorcode,"
-                  "t.txblocknumber,t.txseqinblock,txj.txdbserialnum,txj.protocol,txj.txdata "
-                  "from transactions t, txjson txj where t.txdbserialnum = txj.txdbserialnum and t.protocol != 'Bitcoin' and t.txhash=%s", [transaction_])
+    print "transaction_",transaction_
+    ROWS=dbSelect("select t.txhash,t.protocol,t.txdbserialnum,t.txtype,t.txversion,t.ecosystem,t.txrecvtime,t.txstate,t.txerrorcode,t.txblocknumber,t.txseqinblock,txj.txdbserialnum,txj.protocol,txj.txdata from transactions as t, txjson as txj where t.txdbserialnum = txj.txdbserialnum and t.protocol != 'Bitcoin' and t.txhash=%s", [transaction_])
 
     if len(ROWS) < 1:
       return json.dumps([])
@@ -232,8 +228,7 @@ def gettransaction(hash_id):
       # 54 - Create Property Manual - propertyname, (getgrants), category, totaltokens, url, [issuances], subcategory, data
 
       ROWS=dbSelect("select t.txhash,t.protocol,t.txdbserialnum,t.txtype,t.txversion,t.ecosystem,t.txrecvtime,t.txstate,t.txerrorcode,"
-                    "t.txblocknumber,t.txseqinblock,sp.* "
-                    "transactions t, smartproperties sp where t.txhash=%s and t.txdbserialnum = sp.createtxdbserialnum", [transaction_])
+                    "t.txblocknumber,t.txseqinblock,sp.* from transactions as t, smartproperties sp where t.txhash=%s and t.txdbserialnum = sp.createtxdbserialnum", [transaction_])
       try:
         mpData = json.loads(ROWS[0][-1])
       except TypeError:
@@ -274,7 +269,7 @@ def gettransaction(hash_id):
         if not cancel:
           ROWS=dbSelect("select t.txhash,t.protocol,t.txdbserialnum,t.txtype,t.txversion,t.ecosystem,t.txrecvtime,t.txstate,t.txerrorcode,"
                         "t.txblocknumber,t.txseqinblock,ao.*,txj.txdbserialnum,txj.protocol,txj.txdata "
-                        "from transactions t, activeoffers ao, txjson txj where t.txhash=%s "
+                        "from transactions as t, activeoffers ao, txjson txj where t.txhash=%s "
                         "and t.txdbserialnum = ao.createtxdbserialnum and t.txdbserialnum=txj.txdbserialnum", [transaction_])
           row = ROWS[0]
           try:
@@ -302,7 +297,7 @@ def gettransaction(hash_id):
       if txType == 22:
         ROWS=dbSelect("select t.txhash,t.protocol,t.txdbserialnum,t.txtype,t.txversion,t.ecosystem,t.txrecvtime,t.txstate,t.txerrorcode,"
                       "t.txblocknumber,t.txseqinblock,oa.*,txj.txdbserialnum,txj.protocol,txj.txdata "
-                      "from transactions t, offeraccepts oa, txjson txj where t.txhash=%s "
+                      "from transactions as t, offeraccepts oa, txjson txj where t.txhash=%s "
                       "and t.txdbserialnum = oa.linkedtxdbserialnum and t.txdbserialnum=txj.txdbserialnum", [transaction_])
         try:
           mpData = json.loads(ROWS[0][-1])

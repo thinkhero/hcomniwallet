@@ -4,4 +4,4 @@ TOOLSDIR=$APPDIR/node_modules/mastercoin-tools
 export TOOLSDIR
 export DATADIR
 cd $APPDIR/api
-python
+python 10

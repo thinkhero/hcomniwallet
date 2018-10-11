@@ -183,7 +183,7 @@ def gettransaction(hash_id):
     except TypeError:
       txJson = ROWS[0][-1]
     txData = ROWS[0][:-1]
-
+    
     txType = ROWS[0][3]
     txValid = True if ROWS[0][7] == 'valid' else False
 
@@ -194,6 +194,7 @@ def gettransaction(hash_id):
     # -1 - invalid tx
     # 21 - Metadex - TODO
     #  3 - Send to Owners - TODO
+    print "transaction_service:txType===",txType
 
     ret = {
       "block": txData[9],
@@ -206,7 +207,7 @@ def gettransaction(hash_id):
       "tx_hash": txData[0],
       "tx_time": (str(txJson['blocktime']) + '000') if 'blocktime' in txJson else '',
     }
-
+    print "transaction_service:ret===",ret
     if txType not in [-22,21,25,26,27,28]: #Dex purchases don't have these fields
       ret['currencyId'] = txJson['propertyid']
       ret['currency_str'] = 'Omni' if txJson['propertyid'] == 1 else 'Test Omni' if txJson['propertyid'] == 2 else "Smart Property"
@@ -229,13 +230,17 @@ def gettransaction(hash_id):
 
       ROWS=dbSelect("select t.txhash,t.protocol,t.txdbserialnum,t.txtype,t.txversion,t.ecosystem,t.txrecvtime,t.txstate,t.txerrorcode,"
                     "t.txblocknumber,t.txseqinblock,sp.* from transactions as t, smartproperties sp where t.txhash=%s and t.txdbserialnum = sp.createtxdbserialnum", [transaction_])
+      print "ROWS==",ROWS
+      print "ROWS[0][-3]===",ROWS[0][-3]
+      print "type====",type(ROWS[0][-3])
       try:
-        mpData = json.loads(ROWS[0][-1])
+        mpData = json.loads(ROWS[0][-3])
       except TypeError:
-        mpData = ROWS[0][-1]
-
+	print "except"
+        mpData = ROWS[0][-3]
+      print "mpData",mpData
       ret['previous_property_id'] = "(null)" #TODO FIXME
-
+      print "mpData['name']==",mpData['name']
       ret['propertyName'] = dehexify( mpData['name'] )
       ret['propertyCategory'] = dehexify( mpData['category'] )
       ret['propertyData'] = dehexify( mpData['data'] )

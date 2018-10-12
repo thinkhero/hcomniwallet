@@ -14,7 +14,7 @@
     "angular-bootstrap": "https://github.com/Omniwallet/bootstrap-bower.git#master",
     "angular-ui-bootstrap": "~0.12.0",
     "jsrsasign": "~4.2.1",
-    "FileSaver": "~1.3.2",
+    "FileSaver": "1.3.2",
     "big.js": "~3.1.3",
     "forge": "https://github.com/Omniwallet/forge.git#0.2.30",
     "angular-password-strength": "https://github.com/Omniwallet/angular-password-strength.git#Caret-Operator",

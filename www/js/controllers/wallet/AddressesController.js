@@ -8,10 +8,14 @@ angular.module("omniControllers")
     $scope.listTemplate = $scope.templates['addresses'];
   
     $scope.createBTCAddress = function createBTCAddress() {
-      var ecKey = new Bitcoin.ECKey();
-      var address = ecKey.getBitcoinAddress().toString();
-      var encryptedPrivateKey = ecKey.getEncryptedFormat(address);
-      $scope.account.addAddress(address, encryptedPrivateKey);
+      //var ecKey = new Bitcoin.ECKey();
+      //var address = ecKey.getBitcoinAddress().toString();
+      //var encryptedPrivateKey = ecKey.getEncryptedFormat(address);
+      //$scope.account.addAddress(address, encryptedPrivateKey);
+      var bitcore = require('bitcore-lib');
+      var privateKey = new bitcore.PrivateKey(null, 'hcdlivenet')
+      var address = privateKey.toAddress();
+      $scope.account.addAddress(address.toString(), privateKey.toString());
       $scope.addedNewAddress = true;
       $scope.createdAddress = address;
     };

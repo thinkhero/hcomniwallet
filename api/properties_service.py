@@ -148,7 +148,10 @@ def listcrowdsales():
 
 @app.route('/getdata/<int:property_id>')
 def getdata(property_id):
+    print (">>> enter into getdate")
+    print "property_id",property_id
     property=dbSelect("select PropertyData from smartproperties where PropertyID=%s and Protocol!='Fiat'",[property_id])[0]
+    print jsonify(property[0])
     return jsonify(property[0])
 
 @app.route('/gethistory/<int:property_id>', methods=["POST"])

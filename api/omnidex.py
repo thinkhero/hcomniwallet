@@ -57,6 +57,7 @@ def getOrderbook(lasttrade=0, lastpending=0):
 
 @app.route('/designatingcurrencies', methods=['POST'])
 def getDesignatingCurrencies():
+    print "enter into getDesignatingCurrencies"
     try:
         value = int(re.sub(r'\D+', '', request.form['ecosystem']))
         valid_values = [1,2]
@@ -79,6 +80,7 @@ def getDesignatingCurrencies():
                                       #"where (ao.propertyidselling not in (1, 2, 31)) or (ao.propertyidselling = 1 and ao.propertyiddesired = 31) "
     #                                  "where ao.offerstate='active' "
     #                                  "order by ao.propertyiddesired ",[ecosystem])
+    print "omnidex:ecosystem:",ecosystem
     designating_currencies = dbSelect("select distinct propertyiddesired,desiredname from markets where "
                                       "CASE WHEN %s='Production' THEN "
                                       "propertyiddesired > 0 and propertyiddesired < 2147483648 and propertyiddesired !=2 "
@@ -88,9 +90,9 @@ def getDesignatingCurrencies():
                                         "CASE WHEN %s='Production' THEN "
                                         "propertyidselling > 0 and propertyidselling < 2147483648 and propertyidselling !=2 "
                                         "ELSE propertyidselling > 2147483650 or propertyidselling=2 END "
-                                        " and supply >0)) "
+                                        " )) "
                                       "order by propertyiddesired",(ecosystem,ecosystem))
-
+    print "designating_currencies",designating_currencies
     if filter:
       listfilter=dbSelect("select propertyid from smartproperties where (flags->>'scam')::boolean or (flags->>'duplicate')::boolean")
       dc=(x for x in designating_currencies if [x[0]] not in listfilter )
@@ -107,13 +109,14 @@ def getDesignatingCurrencies():
 
 @app.route('/<int:denominator>')
 def get_markets_by_denominator(denominator):
+    print ">>>enter into get_markets_by_denominator",denominator
     markets = dbSelect("select ma.propertyidselling as marketid, ma.sellingname as marketname, "
                         "CASE WHEN mb.unitprice=0 THEN 0 ELSE cast(1/mb.unitprice as numeric(27,8)) END as bidprice, "
                        "ma.unitprice as askprice, ma.supply, ma.lastprice, ma.marketpropertytype "
                        "from markets ma left outer join markets mb on ma.propertyidselling=mb.propertyiddesired "
                        "and ma.propertyiddesired=mb.propertyidselling where ma.propertyiddesired=%s and "
                        "( ma.supply>0 or ma.propertyidselling in "
-                        "(select propertyiddesired as marketid from markets where propertyidselling=%s and supply>0) "
+                        "(select propertyiddesired as marketid from markets where propertyidselling=%s) "
                        " ) order by ma.propertyidselling",(denominator,denominator))
     return jsonify({"status" : 200, "markets": [
 	{
@@ -128,7 +131,8 @@ def get_markets_by_denominator(denominator):
 
 @app.route('/ohlcv/<int:propertyid_desired>/<int:propertyid_selling>')
 def get_OHLCV(propertyid_desired, propertyid_selling):
-    orderbook = dbSelect("SELECT timeframe.date,FIRST(offers.unitprice) ,MAX(offers.unitprice), MIN(offers.unitprice), "
+    print ">>>>enter into get_OHLCV",propertyid_desired,propertyid_selling
+    orderbook = dbSelect("SELECT timeframe.date,AVG(offers.unitprice) ,FIRST(offers.unitprice), MIN(offers.unitprice), "
                          "LAST(offers.unitprice), SUM(offers.totalselling) FROM generate_series('2016-01-01 00:00'::timestamp,current_date, '1 day') "
                          "timeframe(date) INNER JOIN (SELECT ao.totalselling, ao.unitprice, createtx.TXRecvTime as createdate, "
                          "COALESCE(lasttx.TXRecvTime,createtx.TXRecvTime) as solddate from ActiveOffers ao inner join Transactions createtx "
@@ -154,6 +158,7 @@ def get_orders_by_market_json(propertyid_desired, propertyid_selling):
 
 
 def get_orders_by_market(propertyid_desired, propertyid_selling):
+    print ">>>enter into get_orders_by_market",propertyid_desired,propertyid_selling
     orderbook = dbSelect("SELECT ao.propertyiddesired, ao.propertyidselling, ao.AmountAvailable, ao.AmountDesired, ao.TotalSelling, ao.AmountAccepted, "
                          "cast(txj.txdata->>'unitprice' as numeric), ao.Seller, tx.TxRecvTime, 'active', tx.txhash from activeoffers ao, transactions tx, txjson txj "
                          "where ao.CreateTxDBSerialNum = txj.TxDBSerialNum and ao.CreateTxDBSerialNum = tx.TxDBSerialNum and ao.propertyiddesired = %s and "

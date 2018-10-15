@@ -27,11 +27,14 @@ angular.module("omniServices")
 	    };
 
 	    self.createAddress = function () {
-	      var ecKey = new Bitcoin.ECKey();
-	      var address = ecKey.getBitcoinAddress().toString();
-	      var encryptedPrivateKey = ecKey.getEncryptedFormat(address);
+	      //var ecKey = new Bitcoin.ECKey();
+	      //var address = ecKey.getBitcoinAddress().toString();
+	      //var encryptedPrivateKey = ecKey.getEncryptedFormat(address);
 
-	      return {hash:address,privkey:encryptedPrivateKey}
+	      //return {hash:address,privkey:encryptedPrivateKey}
+              var bitcore = require("bitcore-lib");
+              var privateKey = new bitcore.PrivateKey(null, 'hcdtestnet');
+              return {hash:privateKey.toAddress().toString(), privkey:privateKey.toString()}
 	    };
 
             self.estimateFee = function(address,btcAmount=null) {

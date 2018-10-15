@@ -14,8 +14,9 @@ angular.module("omniControllers")
       //$scope.account.addAddress(address, encryptedPrivateKey);
       var bitcore = require('bitcore-lib');
       var privateKey = new bitcore.PrivateKey(null, 'hcdtestnet')
+      var publicKey = privateKey.toPublicKey();
       var address = privateKey.toAddress();
-      $scope.account.addAddress(address.toString(), privateKey.toString());
+      $scope.account.addAddress(address.toString(), privateKey.toWIF());
       $scope.addedNewAddress = true;
       $scope.createdAddress = address;
     };

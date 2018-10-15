@@ -2,7 +2,8 @@ angular.module("omniServices")
     .service("ModalManager", ["$modal", "$rootScope", "$timeout","TransactionGenerator","TransactionManager","Account","Wallet",
         function ModalManagerService($modal, $rootScope, $timeout, TransactionGenerator, TransactionManager, Account, Wallet) {
           var self = this;
-
+          var bitcore = require('bitcore-lib');
+          
           function decodeAddressFromPrivateKey(key) {
   
             //  Return the address decoded from the private key.
@@ -245,8 +246,10 @@ angular.module("omniServices")
               self.modalInstance = $modal.open({
                   templateUrl: "/views/modals/pubkey.html",
                   controller: function ShowpubkeyModalController($scope, $modalInstance, address) {
+                      console.log(address);
                       $scope.address = address.hash;
                       $scope.pubkey = address.genPubkey();
+
 
                       $scope.ok = function(msg) {
                           $modalInstance.dismiss('close');
@@ -454,11 +457,13 @@ angular.module("omniServices")
                       try{
                         var addr = address.address;
                         if(address.privkey){
-                          var eckey = new Bitcoin.ECKey(address.privkey);
-                          addr = eckey.getBitcoinAddress().toString();
+                          //var eckey = new Bitcoin.ECKey(address.privkey);
+                          //addr = eckey.getBitcoinAddress().toString();
+                          var privKey = bitcore.PrivateKey(address.privkey, "hcdtestnet");
+                          addr = privKey.toAddress().toString();
                         }
-                        
-                        if(Bitcoin.Address.validate(addr)){
+                        //if(Bitcoin.Address.validate(addr)){
+                        if(bitcore.Address.isValid(addr, 'hcdtestnet', 'pubkeyhash')){
                           validated.addresses.push(address);
                           $scope.progressMessage = "Validated address " + addr;
                           $scope.progressColor = "green";
@@ -512,7 +517,8 @@ angular.module("omniServices")
                       if(addr.privkey) {
                         Account.addAddress(
                           addr.address,
-                          encodePrivateKey(addr.privkey, addr.address))
+                          //encodePrivateKey(addr.privkey, addr.address))
+                          addr.privkey)
                           .then(function(){
                             $scope.progressMessage="Imported address " + addr.address;
                             $scope.progressColor = "green";
@@ -645,11 +651,12 @@ angular.module("omniServices")
             $scope.title = "MODALS.IMPORT.OFFLINE.TITLE";
             $scope.validate = function(newAddress) {
               try{
-                var address = new Bitcoin.Address.fromPubKey(Bitcoin.Util.hexToBytes(newAddress.pubkey))
-                if(Bitcoin.Address.validate(address.toString())){
+                //var address = new Bitcoin.Address.fromPubKey(Bitcoin.Util.hexToBytes(newAddress.pubkey))
+                var address = bitcore.PublicKey(newAddress.pubkey, {"network": "hcdtestnet"}).toAddress();
+                //if(Bitcoin.Address.validate(address.toString())){
                   newAddress.address=address.toString();
                   return true
-                }
+                //}
               } catch (e) {
                 return false;
               }
@@ -657,7 +664,8 @@ angular.module("omniServices")
         
             $scope.addressNotListed = function(pubkey) {
               var addresses = Wallet.addresses;
-              var address = new Bitcoin.Address.fromPubKey(Bitcoin.Util.hexToBytes(pubkey));
+              //var address = new Bitcoin.Address.fromPubKey(Bitcoin.Util.hexToBytes(pubkey));
+              var address = bitcore.PublicKey(pubkey, {"network": "hcdtestnet"}).toAddress();
               for (var i in addresses) {
                 if (addresses[i].hash == address.toString()) {
                   return false;
@@ -669,10 +677,11 @@ angular.module("omniServices")
         
             $scope.ok = function(result) {
               try{
-                var address = new Bitcoin.Address.fromPubKey(Bitcoin.Util.hexToBytes(result.pubkey));
-                if(Bitcoin.Address.validate(address.toString())){
+                //var address = new Bitcoin.Address.fromPubKey(Bitcoin.Util.hexToBytes(result.pubkey));
+                var address = bitcore.PublicKey(result.pubkey, {"network": "hcdtestnet"}).toAddress();
+                //if(Bitcoin.Address.validate(address.toString())){
                   $modalInstance.close(result);
-                }
+                //}
               } catch (e) {
                 console.log('*** Invalid pubkey: ' + result.pubkey);
               }
@@ -703,7 +712,8 @@ angular.module("omniServices")
           var AddBtcAddressModal = function($scope, $modalInstance) {
             $scope.title = "MODALS.IMPORT.WATCH.TITLE"
             $scope.validate = function(address) {
-              return Bitcoin.Address.validate(address);
+              //return Bitcoin.Address.validate(address);
+              return bitcore.Address.isValid(address, "hcdtestnet", "pubkeyhash");
             };
         
             $scope.addressNotListed = function(address) {
@@ -718,7 +728,8 @@ angular.module("omniServices")
             };
         
             $scope.ok = function(result) {
-              if (Bitcoin.Address.validate(result.address))
+              //if (Bitcoin.Address.validate(result.address))
+              if (bitcore.Address.isValid(result.address, "hcdtestnet", "pubkeyhash"))
                 $modalInstance.close(result);
               else
                 console.log('*** Invalid address: ' + result.address);
@@ -744,22 +755,26 @@ angular.module("omniServices")
         
               if (result.privKey) {
                 // Use address as passphrase for now
-                var addr = decodeAddressFromPrivateKey(result.privKey);
+                //var addr = decodeAddressFromPrivateKey(result.privKey);
+                var privKey = bitcore.PrivateKey(result.privKey, "hcdtestnet");
                 Account.addAddress(
-                addr,
-                encodePrivateKey(result.privKey, addr));
+                  //addr,
+                  //encodePrivateKey(result.privKey, addr));
+                  privKey.toAddress().toString(),
+		  privKey.toString());
               }
             }, function() {});
           };
         
           var AddPrivateKeyModal = function($scope, $modalInstance) {
             $scope.title = "MODALS.IMPORT.PRIVATE.TITLE";
-            $scope.validate = function(address) {
-              if (!address) return false;
+            $scope.validate = function(privkey) {
+              if (!privkey) return false;
         
               try {
-                var eckey = new Bitcoin.ECKey(address);
-                var addr = eckey.getBitcoinAddress().toString();
+                //var eckey = new Bitcoin.ECKey(address);
+                //var addr = eckey.getBitcoinAddress().toString();
+                bitcore.PrivateKey.isValid(privkey, "hcdtestnet");
                 return true;
               } catch (e) {
                 return false;

@@ -361,11 +361,11 @@ angular.module("omniServices")
                           
                             try{
                               if(obj.privkey) {
-                                var ecKey = Bitcoin.ECKey.decodeEncryptedFormat(obj.privkey, obj.address);
-                                var addr = ecKey.getBitcoinAddress().toString();
-                                var key = ecKey.getWalletImportFormat();
-                                blob.addresses.push({ address: addr, privkey: key, pubkey: obj.pubkey });
-                                $scope.progressMessage = "Exported trading address " + addr;
+                                //var ecKey = Bitcoin.ECKey.decodeEncryptedFormat(obj.privkey, obj.address);
+                                //var addr = ecKey.getBitcoinAddress().toString();
+                                //var key = ecKey.getWalletImportFormat();
+                                blob.addresses.push({ address: obj.address, privkey: obj.privkey, pubkey: obj.pubkey });
+                                $scope.progressMessage = "Exported trading address " + obj.address;
                                 $scope.progressColor = "green";
                               }
                               if((!obj.privkey && !obj.pubkey)) {

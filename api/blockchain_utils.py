@@ -164,8 +164,6 @@ def bc_getbalance_blockr(address):
 
 def bc_getbulkbalance(addresses):
   split=[]
-  recurse=[]
-  counter=0
   retval={}
   cbdata={}
   for a in addresses:
@@ -177,11 +175,7 @@ def bc_getbulkbalance(addresses):
       else:
         cbdata[a]=cb['bal']
     except Exception as e:
-      if counter < 20:
-        split.append(a)
-      else:
-        recurse.append(a)
-      counter+=1
+      split.append(a)
 
   if len(split)==0:
     if len(cbdata) > 0:
@@ -190,41 +184,36 @@ def bc_getbulkbalance(addresses):
       retval={'bal':{}, 'fresh':None}
   else:
     try:
-      data=bc_getbulkbalance_blockonomics(split)
+      data=bc_getbulkbalance_explorer(split)
       if data['error']:
-        raise Exception("issue getting blockonomics baldata",data)
+        raise Exception("issue getting explorer baldata",data)
       else:
         retval={'bal':dict(data['bal'],**cbdata), 'fresh':split}
     except Exception as e:
       print e
-      try:
-        data=bc_getbulkbalance_blockchain(split)
-        if data['error']:
-          raise Exception("issue getting blockchain baldata",data)
-        else:
-          retval={'bal':dict(data['bal'],**cbdata), 'fresh':split}
-      except Exception as e:
-        print e
-        try:
-          data=bc_getbulkbalance_blockr(split)
-          if data['error']:
-            raise Exception("issue getting blockr baldata",data)
-          else:
-            retval={'bal':dict(data['bal'],**cbdata), 'fresh':split}
-        except Exception as e:
-          print e
-          if len(cbdata) > 0:
-            retval={'bal':cbdata, 'fresh':None}
-          else:
-            retval={'bal':{}, 'fresh':None}
-
 
   rSetNotUpdateBTC(retval)
-  if len(recurse)>0:
-    rdata=bc_getbulkbalance(recurse)
-  else:
-    rdata={}
-  return dict(retval['bal'],**rdata)
+  return retval['bal']
+
+def bc_getbulkbalance_explorer(addresses):
+  retval = {}
+  for address in addresses:
+    try:
+      if len(address) and address[0] == "H":
+        url = 'https:/hc-explorer.h.cash/explorer/balance?addr='
+      else:
+        url = 'https://testnet-explorer.h.cash/explorer/balance?addr='
+      r= requests.get(url + address, verify=False)
+      if r.status_code == 200:
+        balance = r.json()['TotalUnspent']
+        retval[address] = balance
+      else:
+        retval[address] = 0
+    except Exception as e:
+      print e
+      retval[address] = 0
+
+  return {"bal": retval, "error": None}
 
       
 def bc_getbulkbalance_blockonomics(addresses):

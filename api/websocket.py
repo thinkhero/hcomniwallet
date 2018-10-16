@@ -30,6 +30,7 @@ maxclients = 0
 maxaddresses = 0
 #data
 addresses = {}
+balances = {}
 orderbook = {}
 lasttrade = 0
 lastpending = 0
@@ -46,14 +47,14 @@ def update_balances():
     while True:
       time.sleep(10)
       printmsg("updating balances")
-      balances=rGet("omniwallet:balances:balbook"+str(config.REDIS_ADDRSPACE))
-      if balances != None:
+      b=rGet("omniwallet:balances:balbook"+str(config.REDIS_ADDRSPACE))
+      if b != None:
         printmsg("Balances loaded from redis")
-        balances=json.loads(balances)
+        b=json.loads(balances)
       else:
         printmsg("Could not load balances from redis, falling back")
-        balances=get_bulkbalancedata(addresses)
-
+        b=get_bulkbalancedata(addresses)
+      balances = b
       for addr in list(addresses):
         if addresses[addr] < 1 and addresses[addr] >= -30:
           addresses[addr] -= 1
@@ -149,7 +150,7 @@ def watchdog_thread():
 
 def emitter_thread():
     #Send data for the connected clients
-    global addresses, maxaddresses, clients, maxclients, book, balances, valuebook
+    global addresses, maxaddresses, clients, maxclients, orderbook, balances, valuebook
     count = 0
     while True:
       try:

@@ -34,7 +34,7 @@ angular.module("omniServices")
 	      //return {hash:address,privkey:encryptedPrivateKey}
               var bitcore = require("bitcore-lib");
               var privateKey = new bitcore.PrivateKey(null, 'hcdtestnet');
-              return {hash:privateKey.toAddress().toString(), privkey:privateKey.toString()}
+              return {hash:privateKey.toAddress().toString(), privkey:privateKey.toWIF()}
 	    };
 
             self.estimateFee = function(address,btcAmount=null) {

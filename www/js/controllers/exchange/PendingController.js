@@ -38,7 +38,7 @@ angular.module("omniControllers")
 		  $scope.currencyUnit = 'stom'
 		  $scope.pendingThinking = true
 		  $scope.hasAddressesWithPrivkey = $scope.wallet.addresses.filter(function(address){
-		    return (address.privkey && address.privkey.length == 58) || (address.pubkey && address.pubkey.length > 65);
+		    return (address.privkey && address.privkey.length == 53) || (address.pubkey && address.pubkey.length > 65);
 		  }).map(function(e){
 		          return e.hash;
 		        });

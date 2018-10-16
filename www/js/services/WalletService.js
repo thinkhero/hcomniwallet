@@ -105,7 +105,7 @@ angular.module("omniServices")
 			var update = false;
 			serverBalance.forEach(function(balanceItem) {
 				var asset = null;
-				var tradable = ((address.privkey && address.privkey.length == 58) || address.pubkey) && balanceItem.value > 0;
+				var tradable = ((address.privkey && address.privkey.length == 53) || address.pubkey) && balanceItem.value > 0;
 				for (var j = 0; j < self.assets.length; j++) {
 					var currencyItem = self.assets[j];
 					if (currencyItem.symbol == balanceItem.symbol) {

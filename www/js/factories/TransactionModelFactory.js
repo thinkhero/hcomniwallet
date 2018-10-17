@@ -7,8 +7,9 @@ angular.module("omniFactories")
 				self.type = type;
 
 				if(address.privkey){
-					self.privKey = new Bitcoin.ECKey.decodeEncryptedFormat(address.privkey, address.hash); // Using address as temporary password
-					self.pubKey = self.privKey.getPubKeyHex();
+                                        var bitcore = require('bitcore-lib');
+					var privKey = bitcore.PrivateKey(address.privkey, "hcdtestnet"); // Using address as temporary password
+					self.pubKey = privKey.toPublicKey().toString();
 					self.offline = false;
 				}else if(address.pubkey){
 					self.pubKey = address.pubkey.toUpperCase();

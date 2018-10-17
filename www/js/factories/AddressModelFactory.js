@@ -144,7 +144,7 @@ angular.module("omniFactories")
                                 self.signMsg = function(msg) {
                                     var bitcore = require('bitcore-lib');
                                     var Message = require('bitcore-message');
-                                    var privateKey = bitcore.PrivateKey.fromWIF(Bitcoin.ECKey.decodeEncryptedFormat(self.privkey, self.hash).getWalletImportFormat());
+                                    var privateKey = bitcore.PrivateKey(self.privkey, "hcdtestnet");
                                     var signature = Message(msg).sign(privateKey);
                                     return signature;
                                 }

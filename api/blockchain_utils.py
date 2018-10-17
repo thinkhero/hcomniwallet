@@ -11,33 +11,29 @@ try:
 except:
   expTime=600
 
-
-def bc_getutxo(address, ramount, page=1, retval=None, avail=0):
-  if retval==None:
-    retval=[]
+def bc_getutxo(address, ramount, avail=0):
+  print address
+  retval=[]
   try:
-    r = requests.get('https://chain.api.btc.com/v3/address/'+address+'/unspent?pagesize=50&page='+str(page))
+    r = requests.get('http://192.168.186.138:3006/api/addr/'+address+'/utxo', verify=False)
     if r.status_code == 200:
-      response = r.json()['data']
-      unspents = response['list']
-      print "got unspent list (btc)", response
+      unspents = r.json()
       for tx in unspents:
-        txUsed=gettxout(tx['tx_hash'],tx['tx_output_n'])['result']
+        txUsed=gettxout(tx['txid'],tx['vout'])['result']
         isUsed = txUsed==None
         coinbaseHold = (txUsed['coinbase'] and txUsed['confirmations'] < 100)
         multisigSkip = ("scriptPubKey" in txUsed and txUsed['scriptPubKey']['type'] == "multisig")
         if not isUsed and not coinbaseHold and txUsed['confirmations'] > 0 and not multisigSkip:
-          avail += tx['value']
-          retval.append([ tx['tx_hash'], tx['tx_output_n'], tx['value'] ])
-          if avail >= ramount:
+          avail += tx['amount']*1e8
+          retval.append([ tx['txid'], tx['vout'], tx['amount'] ])
+          if avail > ramount:
             return {"avail": avail, "utxos": retval, "error": "none"}
-      if int(response['total_count'])-(int(response['pagesize'])*page ) > 0:
-        return bc_getutxo(address, ramount, page+1, retval, avail)
       return {"avail": avail, "error": "Low balance error"}
     else:
-      return bc_getutxo_blockcypher(address, ramount)
-  except:
-    return bc_getutxo_blockcypher(address, ramount)
+      print "=" * 50, r.text
+      return {"error": "Connection error", "code": r.status_code}
+  except Exception as e:
+    return {"error": "Connection error", "code": e}
 
 def bc_getutxo_blocktrail(address, ramount, page=1, retval=None, avail=0):
   #deprecated and migrated to btc.com api

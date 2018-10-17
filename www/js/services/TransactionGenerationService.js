@@ -12,7 +12,7 @@ angular.module('omniServices')
       
       self.getUnsignedTransaction = function(type, data){
         if (type == 0 && data.currency_identifier == 0){ // BTC send
-          data = {
+          d = {
             'from_address':data.pubkey,
             'to_address':data.transaction_to,
             'amount':new Big(data.amount_to_transfer).times(SATOSHI_UNIT).valueOf(),
@@ -21,11 +21,15 @@ angular.module('omniServices')
             'marker': (data.marker || false),
             'testnet': (TESTNET || false)
           };
+          if(data.transaction_from && data.transaction_from.length > 0){
+            d['from_address'] = data.transaction_from;
+            d['pubkey'] = data.pubkey;
+	  }
           var url = '/v1/transaction/send/';
         }else{ // SP and simple send tx
           var url = '/v1/transaction/getunsigned/'+type;
         } 
-        var promise = $http.post(url, data);
+        var promise = $http.post(url, d);
         return promise;
       },
 

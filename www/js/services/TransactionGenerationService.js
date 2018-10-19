@@ -26,11 +26,14 @@ angular.module('omniServices')
             d['pubkey'] = data.pubkey;
 	  }
           var url = '/v1/transaction/send/';
-        }else{ // SP and simple send tx
-          var url = '/v1/transaction/getunsigned/'+type;
+          var promise = $http.post(url, d);
+          return promise;
         } 
-        var promise = $http.post(url, d);
+        // SP and simple send tx
+        var url = '/v1/transaction/getunsigned/'+type;
+        var promise = $http.post(url, data);
         return promise;
+         
       },
 
       self.getArmoryUnsigned = function(unsignedHex,pubKey){

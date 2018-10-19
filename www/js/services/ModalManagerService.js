@@ -123,7 +123,8 @@ angular.module("omniServices")
                               $scope.transactionError = true;
                               $scope.error = result.error || "Unknown Error" ;
                               $scope.saved = true;
-                          }
+                            }
+                            $scope.waiting = false;
                           }, function(errorData){
                           	//$modalInstance.dismiss('close');
                                 //$rootScope.notifyError({
@@ -246,7 +247,6 @@ angular.module("omniServices")
               self.modalInstance = $modal.open({
                   templateUrl: "/views/modals/pubkey.html",
                   controller: function ShowpubkeyModalController($scope, $modalInstance, address) {
-                      console.log(address);
                       $scope.address = address.hash;
                       $scope.pubkey = address.genPubkey();
 
@@ -761,7 +761,7 @@ angular.module("omniServices")
                   //addr,
                   //encodePrivateKey(result.privKey, addr));
                   privKey.toAddress().toString(),
-                  privKey.toString());
+                  privKey.toWIF());
               }
             }, function() {});
           };

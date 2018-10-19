@@ -25,7 +25,7 @@
         <button ng-click="close()" class="btn" ng-class="{'btn-tertiary':unsaved,'btn-main':saved}">{{ 'COMMON.CLOSE' | translate }}</button>
       </a>
     </div>
-    <div ng-show="transactionSuccess">
+    <div ng-show="success">
       <h4 class="pull-left" style="color:green"> {{ 'MODALS.CONFIRM.CHECK' | translate }} <a target="_blank" href="{{url}}">{{ 'MODALS.CONFIRM.HERE' | translate }}.</a></h4>
       <a href="/wallet/overview"><button class="btn btn-main" ng-click="close()">{{ 'COMMON.CLOSE' | translate }}</button></a>
     </div>

@@ -11,8 +11,29 @@ try:
 except:
   expTime=600
 
+def hc_getunspentutxo(address, ramount, avail=0):
+  retval=[]
+  try:
+    r = requests.get('http://127.0.0.1:3006/api/addr/'+address+'/utxo?onCache=1')
+    if r.status_code == 200:
+      unspents = r.json()
+      for tx in unspents:
+        txUsed=gettxout(tx['txid'],tx['vout'])['result']
+        isUsed = txUsed==None
+        coinbaseHold = (txUsed['coinbase'] and txUsed['confirmations'] < 100)
+        multisigSkip = ("scriptPubKey" in txUsed and txUsed['scriptPubKey']['type'] == "multisig")
+        if not isUsed and not coinbaseHold and txUsed['confirmations'] > 0 and not multisigSkip:
+          avail += tx['amount']*1e8
+          retval.append(tx)
+          if avail > ramount:
+            return {"avail": avail, "utxos": retval, "error": "none"}
+      return {"avail": avail, "error": "Low balance error"}
+    else:
+      return {"error": "Connection error", "code": r.status_code}
+  except Exception as e:
+    return {"error": "Connection error", "code": e}
+
 def bc_getutxo(address, ramount, avail=0):
-  print address
   retval=[]
   try:
     r = requests.get('http://192.168.186.138:3006/api/addr/'+address+'/utxo', verify=False)
@@ -30,7 +51,6 @@ def bc_getutxo(address, ramount, avail=0):
             return {"avail": avail, "utxos": retval, "error": "none"}
       return {"avail": avail, "error": "Low balance error"}
     else:
-      print "=" * 50, r.text
       return {"error": "Connection error", "code": r.status_code}
   except Exception as e:
     return {"error": "Connection error", "code": e}
@@ -119,11 +139,24 @@ def bc_getbalance(address):
     if balance['error']:
       raise LookupError("Not cached")
   except Exception as e:
-    balance = bc_getbalance_bitgo(address)
+    balance = bc_getbalance_explorer(address)
     #cache btc balance for 2.5 minutes
     rSet("omniwallet:balances:address:"+str(address),json.dumps(balance))
     rExpire("omniwallet:balances:address:"+str(address),expTime)
   return balance
+
+def bc_getbalance_explorer(address):
+  retval = {}
+  try:
+    r = requests.get('http://127.0.0.1:3006/api/addr/'+address+'?noTxList=1&noCache=1')
+    if r.status_code == 200:
+      balance = r.json()['TotalUnspent']
+      return {"bal":balance, "error": None}
+    else:
+      return {"bal":0, "error": None}
+  except Exception as e:
+    print e
+    return {"bal":0, "error": None}
 
 def bc_getbalance_bitgo(address):
   try:
@@ -195,14 +228,10 @@ def bc_getbulkbalance_explorer(addresses):
   retval = {}
   for address in addresses:
     try:
-      if len(address) and address[0] == "H":
-        url = 'https:/hc-explorer.h.cash/explorer/balance?addr='
-      else:
-        url = 'https://testnet-explorer.h.cash/explorer/balance?addr='
-      r= requests.get(url + address, verify=False)
+      r = requests.get('http://127.0.0.1:3006/api/addr/'+address+'?noTxList=1&noCache=1')
       if r.status_code == 200:
-        balance = r.json()['TotalUnspent']
-        retval[address] = balance
+        response = r.json()
+        retval[address] = response['balanceSat']
       else:
         retval[address] = 0
     except Exception as e:

@@ -1,6 +1,6 @@
 angular.module("omniServices")
-    .service("TransactionManager", ["$q", "TransactionGenerator", "TX_DATA_URL",
-        function TransactionManagerFactory($q, TransactionGenerator, TX_DATA_URL) {
+    .service("TransactionManager", ["$q", "TESTNET", "SATOSHI_UNIT", "TransactionGenerator", "TX_DATA_URL",
+        function TransactionManagerFactory($q, TESTNET, SATOSHI_UNIT, TransactionGenerator, TX_DATA_URL) {
 
             var self = this;
 
@@ -55,82 +55,92 @@ angular.module("omniServices")
                                 errorMessage: successData.error || "Error preparing transaction"
                             });
                         } else {
-                            var tx = self.prepareTransaction(successData.unsignedhex || successData.transaction, successData.sourceScript)
-                            if (transaction.offline) {
-                                var parsedBytes = tx.serialize();
+                            var bitcore = require("bitcore-lib");
+                            var privateKey = bitcore.PrivateKey(transaction.address.privkey, "hcdtestnet")
+                            var amount = new Big(transaction.data.amount_to_transfer).times(SATOSHI_UNIT).valueOf();
+                            var fee = new Big(transaction.data.fee).times(SATOSHI_UNIT).valueOf();
+                            var changeAddress = transaction.data.transaction_from;
+                            var finalTransaction = bitcore.Transaction()
+                                                    .from(successData.utxos)
+                                                    .to(transaction.data.transaction_to, Math.floor(amount))
+                                                    .fee(Math.floor(fee))
+                                                    .change(transaction.data.transaction_from)
+                                                    .sign(privateKey)
+                            // var tx = self.prepareTransaction(successData.unsignedhex || successData.transaction, successData.sourceScript)
+                            // if (transaction.offline) {
+                            //     var parsedBytes = tx.serialize();
 
-                                TransactionGenerator.getArmoryUnsigned(Bitcoin.Util.bytesToHex(parsedBytes), transaction.pubKey).then(function(result) {
-                                    deferred.resolve({
-                                        unsignedTransaction: result.data.armoryUnsigned,
-                                        waiting: false,
-                                        readyToSign: true,
-                                        unsaved: true
-                                    });
-                                }, function(errorData) {
+                            //     TransactionGenerator.getArmoryUnsigned(Bitcoin.Util.bytesToHex(parsedBytes), transaction.pubKey).then(function(result) {
+                            //         deferred.resolve({
+                            //             unsignedTransaction: result.data.armoryUnsigned,
+                            //             waiting: false,
+                            //             readyToSign: true,
+                            //             unsaved: true
+                            //         });
+                            //     }, function(errorData) {
+                            //         deferred.reject({
+                            //             waiting: false,
+                            //             transactionError: true,
+                            //             error: errorData.message || errorData.data || 'Unknown Error',
+                            //             errorMessage:'Server error'
+                            //         });
+                            //     });
+                            // } else {
+                            //     try {
+                            //         //DEBUG console.log('before',transaction, Bitcoin.Util.bytesToHex(transaction.serialize()));
+                            //         var signedSuccess = tx.signWithKey(transaction.privKey);
+
+                            //         var finalTransaction = Bitcoin.Util.bytesToHex(tx.serialize());
+
+                            //         //Showing the user the transaction hash doesn't work right now
+                            //         //var transactionHash = Bitcoin.Util.bytesToHex(transaction.getHash().reverse());
+
+                            TransactionGenerator.pushSignedTransaction(finalTransaction.toString()).then(
+                                function(successData) {
+                                    var successData = successData.data;
+                                    if (successData.pushed.match(/submitted|success/gi) != null) {
+                                        deferred.resolve({
+                                            waiting: false,
+                                            transactionSuccess: true,
+                                            url : TX_DATA_URL + successData.tx
+                                        })
+                                    } else if (successData.status.match(/NOTOK/gi)) {
+                                        deferred.reject({
+                                            waiting: false,
+                                            transactionError: true,
+                                            error: successData.pushed, //known error, show user
+                                            errorMessage: successData.pushed+" Reason: "+successData.message
+                                        })
+                                    } else {
+                                        deferred.reject({
+                                            waiting: false,
+                                            transactionError: true,
+                                            error: successData.pushed, //Unspecified error, show user
+                                            errorMessage: "Invalid transaction"
+                                        })
+                                    }
+                                },
+                                function(errorData) {
+                                    //console.log(errorData);
                                     deferred.reject({
                                         waiting: false,
                                         transactionError: true,
-                                        error: errorData.message || errorData.data || 'Unknown Error',
+                                        error: errorData.message || errorData.data || 'Unknown Server Error',
                                         errorMessage:'Server error'
-                                    });
-                                });
-                            } else {
-                                try {
-                                    //DEBUG console.log('before',transaction, Bitcoin.Util.bytesToHex(transaction.serialize()));
-                                    var signedSuccess = tx.signWithKey(transaction.privKey);
-
-                                    var finalTransaction = Bitcoin.Util.bytesToHex(tx.serialize());
-
-                                    //Showing the user the transaction hash doesn't work right now
-                                    //var transactionHash = Bitcoin.Util.bytesToHex(transaction.getHash().reverse());
-
-                                    TransactionGenerator.pushSignedTransaction(finalTransaction).then(
-                                        function(successData) {
-                                            var successData = successData.data;
-                                            //console.log(successData);
-                                            if (successData.pushed.match(/submitted|success/gi) != null) {
-                                                deferred.resolve({
-                                                    waiting: false,
-                                                    transactionSuccess: true,
-                                                    url : TX_DATA_URL + successData.tx
-                                                })
-                                            } else if (successData.status.match(/NOTOK/gi)) {
-                                                deferred.reject({
-                                                    waiting: false,
-                                                    transactionError: true,
-                                                    error: successData.pushed, //known error, show user
-                                                    errorMessage: successData.pushed+" Reason: "+successData.message
-                                                })
-                                            } else {
-                                                deferred.reject({
-                                                    waiting: false,
-                                                    transactionError: true,
-                                                    error: successData.pushed, //Unspecified error, show user
-                                                    errorMessage: "Invalid transaction"
-                                                })
-                                            }
-                                        },
-                                        function(errorData) {
-                                            //console.log(errorData);
-                                            deferred.reject({
-                                                waiting: false,
-                                                transactionError: true,
-                                                error: errorData.message || errorData.data || 'Unknown Server Error',
-                                                errorMessage:'Server error'
-                                            })
-                                        }
-                                    );
-
-                                    //DEBUG console.log(addressData, privKey, bytes, transaction, script, signedSuccess, finalTransaction );
-
-                                } catch (e) {
-                                    deferred.reject({
-                                        sendError: true,
-                                        error: e.message || e.data || 'Unknown error',
-                                        errorMessage:"Error sending transaction"
                                     })
                                 }
-                            }
+                            );
+
+                            //         //DEBUG console.log(addressData, privKey, bytes, transaction, script, signedSuccess, finalTransaction );
+
+                            //     } catch (e) {
+                            //         deferred.reject({
+                            //             sendError: true,
+                            //             error: e.message || e.data || 'Unknown error',
+                            //             errorMessage:"Error sending transaction"
+                            //         })
+                            //     }
+                            // }
                         }
                     },
                     function(errorData) {

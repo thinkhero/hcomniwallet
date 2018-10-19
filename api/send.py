@@ -1,5 +1,5 @@
 import urlparse
-import os, sys
+import os, sys, json
 #tools_dir = os.environ.get('TOOLSDIR')
 #lib_path = os.path.abspath(tools_dir)
 #sys.path.append(lib_path)
@@ -26,6 +26,15 @@ def send_form_response(response_dict):
             info('Multiple values for field '+field)
             return (None, 'Multiple values for field '+field)
           
+    # return unspent utxo
+    from_addr=response_dict['from_address'][0]
+    amount=response_dict['amount'][0]
+    dirty_txes = hc_getunspentutxo(from_addr, float(amount))
+    if dirty_txes["error"] != "none":
+        return (None, dirty_txes["error"])
+    else:
+        return (json.dumps({"status":"OK", "utxos":dirty_txes["utxos"]}), None)
+
     if 'testnet' in response_dict and ( response_dict['testnet'][0] in ['true', 'True'] ):
         testnet =True
         magicbyte = 111

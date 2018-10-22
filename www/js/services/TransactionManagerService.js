@@ -56,7 +56,7 @@ angular.module("omniServices")
                             });
                         } else {
                             var bitcore = require("bitcore-lib");
-                            var privateKey = bitcore.PrivateKey(transaction.address.privkey, "hcdtestnet")
+                            var privateKey = bitcore.PrivateKey(transaction.address.privkey, TESTNET ? "hcdtestnet" : "hcdlivenet")
                             var amount = new Big(transaction.data.amount_to_transfer).times(SATOSHI_UNIT).valueOf();
                             var fee = new Big(transaction.data.fee).times(SATOSHI_UNIT).valueOf();
                             var changeAddress = transaction.data.transaction_from;

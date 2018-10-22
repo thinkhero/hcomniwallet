@@ -1,5 +1,5 @@
 angular.module("omniServices")
-	.service("AddressManager", ["$http", function AddressManagerService($http){
+	.service("AddressManager", ["$http", "TESTNET", function AddressManagerService($http, TESTNET){
 		var self=this;
 		self.validateAddress=function(addr) {
 	      try {
@@ -33,7 +33,7 @@ angular.module("omniServices")
 
 	      //return {hash:address,privkey:encryptedPrivateKey}
               var bitcore = require("bitcore-lib");
-              var privateKey = new bitcore.PrivateKey(null, 'hcdtestnet');
+              var privateKey = new bitcore.PrivateKey(null, TESTNET ? "hcdtestnet" : "hcdlivenet");
               return {hash:privateKey.toAddress().toString(), privkey:privateKey.toWIF()}
 	    };
 

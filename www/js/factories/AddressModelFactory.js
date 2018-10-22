@@ -1,6 +1,6 @@
 angular.module("omniFactories")
-	.factory("Address", ["BalanceSocket", "$rootScope", "AddressManager", "WHOLE_UNIT", 
-		function AddressModelFactory(BalanceSocket, $rootScope, AddressManager, WHOLE_UNIT){
+	.factory("Address", ["BalanceSocket", "$rootScope", "AddressManager", "TESTNET", "WHOLE_UNIT", 
+		function AddressModelFactory(BalanceSocket, $rootScope, AddressManager, TESTNET, WHOLE_UNIT){
 			var AddressModel = function(hash,privkey,pubkey){
 				var self = this;
 
@@ -144,7 +144,7 @@ angular.module("omniFactories")
                                 self.signMsg = function(msg) {
                                     var bitcore = require('bitcore-lib');
                                     var Message = require('bitcore-message');
-                                    var privateKey = bitcore.PrivateKey(self.privkey, "hcdtestnet");
+                                    var privateKey = bitcore.PrivateKey(self.privkey, TESTNET ? "hcdtestnet" : "hcdlivenet");
                                     var signature = Message(msg).sign(privateKey);
                                     return signature;
                                 }

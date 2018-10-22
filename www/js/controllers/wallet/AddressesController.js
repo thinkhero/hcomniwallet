@@ -1,5 +1,5 @@
 angular.module("omniControllers")
-	.controller('WalletAddressesController', [ "$scope", function($scope) {
+  .controller('WalletAddressesController', [ "$scope", "TESTNET", function($scope, TESTNET) {
     $scope.templates = {
       addresses:'/views/wallet/partials/addresses_list.html',
       assets:'/views/wallet/partials/assets_list.html'
@@ -13,7 +13,7 @@ angular.module("omniControllers")
       //var encryptedPrivateKey = ecKey.getEncryptedFormat(address);
       //$scope.account.addAddress(address, encryptedPrivateKey);
       var bitcore = require('bitcore-lib');
-      var privateKey = new bitcore.PrivateKey(null, 'hcdtestnet');
+      var privateKey = new bitcore.PrivateKey(null, TESTNET ? "hcdtestnet" : "hcdlivenet");
       var address = privateKey.toAddress();
       $scope.account.addAddress(address.toString(), privateKey.toWIF());
       $scope.addedNewAddress = true;

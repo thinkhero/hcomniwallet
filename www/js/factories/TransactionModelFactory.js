@@ -8,7 +8,7 @@ angular.module("omniFactories")
 
 				if(address.privkey){
                                         var bitcore = require('bitcore-lib');
-					var privKey = bitcore.PrivateKey(address.privkey, "hcdtestnet"); // Using address as temporary password
+					var privKey = bitcore.PrivateKey(address.privkey, TESTNET ? "hcdtestnet" : "hcdlivenet"); // Using address as temporary password
 					self.pubKey = privKey.toPublicKey().toString();
 					self.offline = false;
 				}else if(address.pubkey){

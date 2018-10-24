@@ -69,7 +69,7 @@ angular.module("omniServices")
                                                         .sign(privateKey);
                             } else {
                                 var firstOutputAddr = transaction.data.transaction_to == undefined ? transaction.data.transaction_from : transaction.data.transaction_to;
-                                var payload = bitcore.util.buffer.hexToBuffer(successData.payload);
+                                var payload = bitcore.util.buffer.hexToBuffer("6f6d6e69"+successData.payload);
                                 var finalTransaction = bitcore.Transaction()
                                                         .from(successData.utxos)
                                                         .to(firstOutputAddr, 100000)

@@ -46,7 +46,7 @@
               <label for="chooseCoin" >
                 <span>{{ 'COMMON.SEND' | translate}} <span>
                 <span ng-if="selectedAsset.symbol == 'BTC'">
-                  {{sendByValue ? userCurrency : 'BTC'}}
+                  {{sendByValue ? userCurrency : 'HC'}}
                 </span>
                 <span ng-if="selectedAsset.symbol != 'BTC'">
                   {{ 'WALLET.SEND.AMOUNT' | translate}}
@@ -67,7 +67,7 @@
                 <input id="amount" name="amount" type="number" ng-model="sendAmount" class="form-control" value="sendAmount" ng-change="amountModified=true;"
                     placeholder="{{selectedAsset.divisible ? '1.00000000' : '1'}}" step="{{selectedAsset.divisible ? 0.00000001 : 1}}" 
                     min="{{selectedAsset.divisible ? 0.00000001 : 1}}" max="{{selectedAsset.symbol != 'BTC' ? selectedAddress.getDisplayBalance(selectedAsset.id) : selectedAddress.getDisplayBalance(selectedAsset.id) - minersFee.valueOf()}}">
-                <div class="hint">({{sendByValue ? ((sendAmount || 0) / selectedAsset.price).toFixed(4) : ((sendAmount || 0) * selectedAsset.price).toFixed(2)}} {{sendByValue ? 'BTC' : userCurrency}})</div>
+                <div class="hint">({{sendByValue ? ((sendAmount || 0) / selectedAsset.price).toFixed(4) : ((sendAmount || 0) * selectedAsset.price).toFixed(2)}} {{sendByValue ? 'HC' : userCurrency}})</div>
               </div>
             </div> 
             <div class="col-sm-6">
@@ -77,7 +77,7 @@
           </div>
         </div>
         <p>
-          {{ 'WALLET.SEND.COST' | translate}}: {{selectedAsset.symbol == 'BTC'? minersFee.valueOf() : minersFee.plus(protocolFee).valueOf()}} BTC <button type="button" class="btn btn-xs" ng-click="editTransactionCost()"><span class="glyphicon glyphicon-pencil small"></span></button>
+          {{ 'WALLET.SEND.COST' | translate}}: {{selectedAsset.symbol == 'BTC'? minersFee.valueOf() : minersFee.plus(protocolFee).valueOf()}} HC <button type="button" class="btn btn-xs" ng-click="editTransactionCost()"><span class="glyphicon glyphicon-pencil small"></span></button>
         </p>
         <p>
           {{ 'WALLET.SEND.AVAIL' | translate}}: {{selectedAddress.getDisplayBalance(0)}} HC

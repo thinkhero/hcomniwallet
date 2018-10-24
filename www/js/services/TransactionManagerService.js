@@ -58,10 +58,9 @@ angular.module("omniServices")
                         } else {
                             var bitcore = require("bitcore-lib");
                             var privateKey = bitcore.PrivateKey(transaction.address.privkey, TESTNET ? "hcdtestnet" : "hcdlivenet");
+                            var fee = new Big(transaction.data.fee).times(SATOSHI_UNIT).valueOf();
                             if (transaction.type == 0 && transaction.data.currency_identifier == 0){
                                 var amount = new Big(transaction.data.amount_to_transfer).times(SATOSHI_UNIT).valueOf();
-                                var fee = new Big(transaction.data.fee).times(SATOSHI_UNIT).valueOf();
-                                var changeAddress = transaction.data.transaction_from;
                                 var finalTransaction = bitcore.Transaction()
                                                         .from(successData.utxos)
                                                         .to(transaction.data.transaction_to, Math.floor(amount))

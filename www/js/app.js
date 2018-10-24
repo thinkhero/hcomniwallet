@@ -9,7 +9,7 @@ angular.module("omniConfig")
   }])
   .factory("TX_DATA_URL",["TESTNET", function TxDataUrlFactory(TESTNET){
     if(TESTNET)
-      return "http://tbtc.blockr.io/tx/info/";
+      return "http://47.75.73.254:3000/tx/";
     else
       return "https://www.blocktrail.com/BTC/tx/";
   }])

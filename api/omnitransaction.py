@@ -53,11 +53,11 @@ class OmniTransaction:
         rawtx = None
         fee_total = Decimal(self.fee)
 
-        dirty_txes = hc_getunspentutxo(from_addr, Decimal(self.rawdata['fee']))
+        dirty_txes = hc_getunspentutxo(from_addr, 200000)
         if dirty_txes["error"] != "none":
-            return (None, dirty_txes["error"])
+            return {'status':503, 'error':dirty_txes["error"]}
         else:
-            return (json.dumps({"status":"OK", "utxos":dirty_txes["utxos"], "payload":payload}), None)
+            return {"status":200, "utxos":dirty_txes["utxos"], "payload":payload}
 
         if 'transaction_to' in self.rawdata:
             # Add reference for reciever to figure out potential tx cost

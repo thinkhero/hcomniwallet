@@ -1,6 +1,6 @@
 angular.module("omniControllers")
-  .controller("WalletManageController",["$scope", "MIN_MINER_FEE", "MINER_SPEED", "OMNI_PROTOCOL_COST", "SATOSHI_UNIT", "Transaction", "$filter",
-      function WalletManageController($scope, MIN_MINER_FEE, MINER_SPEED, PROTOCOL_FEE, SATOSHI_UNIT, Transaction, $filter){
+  .controller("WalletManageController",["$scope", "TESTNET", "MIN_MINER_FEE", "MINER_SPEED", "OMNI_PROTOCOL_COST", "SATOSHI_UNIT", "Transaction", "$filter",
+      function WalletManageController($scope, TESTNET, MIN_MINER_FEE, MINER_SPEED, PROTOCOL_FEE, SATOSHI_UNIT, Transaction, $filter){
 
         function checkSend() {
             if($scope.selectedAddress != undefined){
@@ -53,7 +53,7 @@ angular.module("omniControllers")
         }
 
         $scope.checkDestAddr = function(){
-            var regex = RegExp('^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$')
+            var regex = RegExp(TESTNET ? '^[T][a-km-zA-HJ-NP-Z1-9]{25,34}$' : '^[H][a-km-zA-HJ-NP-Z1-9]{25,34}$')
             if ($scope.type_int === 70 && ($scope.sendTo === undefined || !regex.test($scope.sendTo) )) {
                 $scope.needToAddr = true;
             } else {

@@ -15,7 +15,7 @@ angular.module("omniConfig")
   }])
   .factory("ADDRESS_EXPLORER_URL",["TESTNET", function AddressExplorerUrlFactory(TESTNET){
     if(TESTNET)
-      return "http://tbtc.blockr.io/address/info/";
+      return "https://testnet-explorer.h.cash/address/info/";
     else
       return "https://omniexplorer.info/lookupadd.aspx?address=";
   }])

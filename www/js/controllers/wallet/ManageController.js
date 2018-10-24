@@ -74,7 +74,7 @@ angular.module("omniControllers")
                 $scope.type = "Change Issuer";
                 $scope.type_int = 70;
             }
-            checkDestAddr();
+            $scope.checkDestAddr();
         }
 
         $scope.editTransactionCost = function(){

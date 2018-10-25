@@ -67,11 +67,13 @@ angular.module("omniFactories")
 						var data = result.data;
 						//console.log("found data for "+data.address+" its length is "+data.transactions.length);
 						txs=data.transactions;
-						return txs.map(function(tx){
+						var res = [];
+						txs.map(function(tx){
 							if ((tx.currency.propertyid < 2147483648 && tx.currency.propertyid != 2) || showtesteco === 'true') {
-								return tx;
+								res.push(tx);
 							}
 						});
+						return res;
 					});
 				}
 

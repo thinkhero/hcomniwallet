@@ -1,11 +1,11 @@
 //Define Modules here first
 angular.module("omniConfig")
   .factory("TESTNET",["$location",function TestnetFactory($location){
-    //if($location.host().match('testnet') != null){
-    //  Bitcoin.setNetwork('test');
+    if($location.host().match('testnet') != null){
+      Bitcoin.setNetwork('test');
       return true;
-    //} else
-    //  return false;
+    } else
+      return false;
   }])
   .factory("TX_DATA_URL",["TESTNET", function TxDataUrlFactory(TESTNET){
     if(TESTNET)

@@ -143,18 +143,18 @@ angular.module("omniFactories")
 					}
 				}
 
-                                self.signMsg = function(msg) {
-                                    var bitcore = require('bitcore-lib');
-                                    var Message = require('bitcore-message');
-                                    var privateKey = bitcore.PrivateKey(self.privkey, TESTNET ? "hcdtestnet" : "hcdlivenet");
-                                    var signature = Message(msg).sign(privateKey);
-                                    return signature;
-                                }
+				self.signMsg = function(msg) {
+					var bitcore = require('bitcore-lib');
+					var Message = require('bitcore-message');
+					var privateKey = bitcore.PrivateKey(self.privkey, TESTNET ? "hcdtestnet" : "hcdlivenet");
+					var signature = Message(msg).sign(privateKey);
+					return signature;
+				}
 
-                                self.genPubkey = function() {
-                                    var pubkey = Bitcoin.ECKey.decodeEncryptedFormat(self.privkey, self.hash).getPubKeyHex();
-                                    return pubkey;
-                                }
+				self.genPubkey = function() {
+					var pubkey = Bitcoin.ECKey.decodeEncryptedFormat(self.privkey, self.hash).getPubKeyHex();
+					return pubkey;
+				}
 
 				self.initialize();
 			}

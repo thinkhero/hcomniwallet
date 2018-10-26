@@ -20,8 +20,8 @@
 <div class="row">
   <div class="col-xs-12 small" style="padding-top:10px;">{{'CROWDSALE.DETAILS.TOKENSISSUER' | translate}} ({{property.percenttoissuer}}%)</div>
   <div class="col-xs-12">
-    <div class="tag text-center" ng-if="!property.divisible" ng-bind-html="(property.totaltokens * property.property.percenttoissuer / (property.percenttoissuer + 100)) | bigjs: '0,0'"></div>
-    <div class="tag text-center" ng-if="property.divisible" ng-bind-html="(property.totaltokens * property.property.percenttoissuer / (property.percenttoissuer + 100)) | toWhole | bigjs: '0,0.00000000'"></div>
+    <div class="tag text-center" ng-if="!property.divisible" ng-bind-html="(property.totaltokens * property.percenttoissuer / (property.percenttoissuer + 100)) | bigjs: '0,0'"></div>
+    <div class="tag text-center" ng-if="property.divisible" ng-bind-html="(property.totaltokens * property.percenttoissuer / (property.percenttoissuer + 100)) | toWhole | bigjs: '0,0.00000000'"></div>
   </div>
 </div>
  <div class="row" ng-if="property.active" >

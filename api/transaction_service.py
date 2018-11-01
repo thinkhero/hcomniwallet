@@ -11,6 +11,14 @@ app.debug = True
 
 @app.route('/estimatefee/<addr>', methods=['GET','POST'])
 def estimatefees(addr):
+    #default 0.001
+    ret={"address":addr,
+         "class_c":{"faster": faster, "fast": fast, "normal": normal, "estimates":{"size":size, "ins":ins, "outs":outs} },
+         "topup_c":{"faster": tfaster, "fast": tfast, "normal": tnormal, "estimates":{"size":tsize, "ins":ins+1, "outs":outs} }
+         "class_c":{"faster": 0.001, "fast": 0.001, "normal": 0.001, "estimates":{"size":size, "ins":ins, "outs":outs} },
+         "topup_c":{"faster": 0.001, "fast": 0.001, "normal": 0.001, "estimates":{"size":tsize, "ins":ins+1, "outs":outs} }
+        }
+    return jsonify(ret)
     try:
       address = str(re.sub(r'\W+', '', addr ) ) #check alphanumeric
     except ValueError:
@@ -55,19 +63,17 @@ def estimatefees(addr):
     size=ins*180 + outs*34 + 10 + 80
     tsize=math.ceil((size+180)*1.05)
 
-    #faster = '%.8f' % ( Decimal(int((size * fees['faster'])/1000)) / Decimal(1e8) )
-    #fast = '%.8f' % ( Decimal(int((size * fees['fast'])/1000)) / Decimal(1e8) )
-    #normal = '%.8f' % ( Decimal(int((size * fees['normal'])/1000)) / Decimal(1e8) )
+    faster = '%.8f' % ( Decimal(int((size * fees['faster'])/1000)) / Decimal(1e8) )
+    fast = '%.8f' % ( Decimal(int((size * fees['fast'])/1000)) / Decimal(1e8) )
+    normal = '%.8f' % ( Decimal(int((size * fees['normal'])/1000)) / Decimal(1e8) )
 
-    #tfaster = '%.8f' % ( Decimal(int((tsize * fees['faster'])/1000)) / Decimal(1e8) )
-    #tfast = '%.8f' % ( Decimal(int((tsize * fees['fast'])/1000)) / Decimal(1e8) )
-    #tnormal = '%.8f' % ( Decimal(int((tsize * fees['normal'])/1000)) / Decimal(1e8) )
+    tfaster = '%.8f' % ( Decimal(int((tsize * fees['faster'])/1000)) / Decimal(1e8) )
+    tfast = '%.8f' % ( Decimal(int((tsize * fees['fast'])/1000)) / Decimal(1e8) )
+    tnormal = '%.8f' % ( Decimal(int((tsize * fees['normal'])/1000)) / Decimal(1e8) )
 
     ret={"address":addr,
-         #"class_c":{"faster": faster, "fast": fast, "normal": normal, "estimates":{"size":size, "ins":ins, "outs":outs} },
-         #"topup_c":{"faster": tfaster, "fast": tfast, "normal": tnormal, "estimates":{"size":tsize, "ins":ins+1, "outs":outs} }
-         "class_c":{"faster": 0.001, "fast": 0.001, "normal": 0.001, "estimates":{"size":size, "ins":ins, "outs":outs} },
-         "topup_c":{"faster": 0.001, "fast": 0.001, "normal": 0.001, "estimates":{"size":tsize, "ins":ins+1, "outs":outs} }
+         "class_c":{"faster": faster, "fast": fast, "normal": normal, "estimates":{"size":size, "ins":ins, "outs":outs} },
+         "topup_c":{"faster": tfaster, "fast": tfast, "normal": tnormal, "estimates":{"size":tsize, "ins":ins+1, "outs":outs} }
         }
     return jsonify(ret)
 

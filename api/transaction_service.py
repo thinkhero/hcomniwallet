@@ -13,8 +13,6 @@ app.debug = True
 def estimatefees(addr):
     #default 0.001
     ret={"address":addr,
-         "class_c":{"faster": faster, "fast": fast, "normal": normal, "estimates":{"size":size, "ins":ins, "outs":outs} },
-         "topup_c":{"faster": tfaster, "fast": tfast, "normal": tnormal, "estimates":{"size":tsize, "ins":ins+1, "outs":outs} }
          "class_c":{"faster": 0.001, "fast": 0.001, "normal": 0.001, "estimates":{"size":size, "ins":ins, "outs":outs} },
          "topup_c":{"faster": 0.001, "fast": 0.001, "normal": 0.001, "estimates":{"size":tsize, "ins":ins+1, "outs":outs} }
         }

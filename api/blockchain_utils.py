@@ -20,7 +20,7 @@ def hc_getunspentutxo(address, ramount, avail=0):
       for tx in unspents:
         txUsed=gettxout(tx['txid'],tx['vout'])['result']
         isUsed = txUsed==None
-        coinbaseHold = (txUsed['coinbase'] and txUsed['confirmations'] < 100)
+        coinbaseHold = (txUsed['coinbase'] and txUsed['confirmations'] < 10)
         multisigSkip = ("scriptPubKey" in txUsed and txUsed['scriptPubKey']['type'] == "multisig")
         if not isUsed and not coinbaseHold and txUsed['confirmations'] > 0 and not multisigSkip:
           avail += tx['amount']*1e8
@@ -32,17 +32,6 @@ def hc_getunspentutxo(address, ramount, avail=0):
       return {"error": "Connection error", "code": r.status_code}
   except Exception as e:
     return {"error": "Connection error", "code": e}
-
-def bc_getpubkey(address):
-  try:
-    r = requests.get('https://blockchain.info/q/pubkeyaddr/'+address)
-
-    if r.status_code == 200:
-      return str(r.text)
-    else:
-      return "error"
-  except:
-    return "error"
 
 def bc_getbalance(address):
   try:
@@ -67,10 +56,10 @@ def bc_getbalance_explorer(address):
       for tx in unspents:
         txUsed=gettxout(tx['txid'],tx['vout'])['result']
         isUsed = txUsed==None
-        coinbaseHold = (txUsed['coinbase'] and txUsed['confirmations'] < 1)
+        coinbaseHold = (txUsed['coinbase'] and txUsed['confirmations'] < 10)
         multisigSkip = ("scriptPubKey" in txUsed and txUsed['scriptPubKey']['type'] == "multisig")
         if not isUsed and not coinbaseHold and txUsed['confirmations'] > 0 and not multisigSkip:
-          avail += tx['amount']
+          balance += tx['amount']
       return {"bal":balance, "error": None}
     else:
       return {"bal":0, "error": None}
@@ -116,6 +105,17 @@ def bc_getbulkbalance_explorer(addresses):
   for address in addresses:
     retval[address] = bc_getbalance_explorer(address)["bal"]
   return {"bal": retval, "error": None}
+
+# def bc_getpubkey(address):
+#   try:
+#     r = requests.get('https://blockchain.info/q/pubkeyaddr/'+address)
+
+#     if r.status_code == 200:
+#       return str(r.text)
+#     else:
+#       return "error"
+#   except:
+#     return "error"
 
 # def bc_getutxo(address, ramount, avail=0):
 #   retval=[]

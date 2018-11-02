@@ -59,7 +59,7 @@ def bc_getbalance_explorer(address):
         coinbaseHold = (txUsed['coinbase'] and txUsed['confirmations'] < 10)
         multisigSkip = ("scriptPubKey" in txUsed and txUsed['scriptPubKey']['type'] == "multisig")
         if not isUsed and not coinbaseHold and txUsed['confirmations'] > 0 and not multisigSkip:
-          balance += tx['amount']
+          balance += tx['amount']*1e8
       return {"bal":balance, "error": None}
     else:
       return {"bal":0, "error": None}

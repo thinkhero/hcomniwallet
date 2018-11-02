@@ -33,6 +33,90 @@ def hc_getunspentutxo(address, ramount, avail=0):
   except Exception as e:
     return {"error": "Connection error", "code": e}
 
+def bc_getpubkey(address):
+  try:
+    r = requests.get('https://blockchain.info/q/pubkeyaddr/'+address)
+
+    if r.status_code == 200:
+      return str(r.text)
+    else:
+      return "error"
+  except:
+    return "error"
+
+def bc_getbalance(address):
+  try:
+    balance=rGet("omniwallet:balances:address:"+str(address))
+    balance=json.loads(balance)
+    if balance['error']:
+      raise LookupError("Not cached")
+  except Exception as e:
+    balance = bc_getbalance_explorer(address)
+    #cache btc balance for 2.5 minutes
+    rSet("omniwallet:balances:address:"+str(address),json.dumps(balance))
+    rExpire("omniwallet:balances:address:"+str(address),expTime)
+  return balance
+
+def bc_getbalance_explorer(address):
+  retval = {}
+  try:
+    r = requests.get('http://127.0.0.1:3006/api/addr/'+address+'/utxo?onCache=1')
+    if r.status_code == 200:
+      unspents = r.json()
+      balance = 0
+      for tx in unspents:
+        txUsed=gettxout(tx['txid'],tx['vout'])['result']
+        isUsed = txUsed==None
+        coinbaseHold = (txUsed['coinbase'] and txUsed['confirmations'] < 1)
+        multisigSkip = ("scriptPubKey" in txUsed and txUsed['scriptPubKey']['type'] == "multisig")
+        if not isUsed and not coinbaseHold and txUsed['confirmations'] > 0 and not multisigSkip:
+          avail += tx['amount']
+      return {"bal":balance, "error": None}
+    else:
+      return {"bal":0, "error": None}
+  except Exception as e:
+    print e
+    return {"bal":0, "error": None}
+
+def bc_getbulkbalance(addresses):
+  split=[]
+  retval={}
+  cbdata={}
+  for a in addresses:
+    try:
+      cb=rGet("omniwallet:balances:address:"+str(a))
+      cb=json.loads(cb)
+      if cb['error']:
+        raise LookupError("Not cached")
+      else:
+        cbdata[a]=cb['bal']
+    except Exception as e:
+      split.append(a)
+
+  if len(split)==0:
+    if len(cbdata) > 0:
+      retval={'bal':cbdata, 'fresh':None}
+    else:
+      retval={'bal':{}, 'fresh':None}
+  else:
+    try:
+      data=bc_getbulkbalance_explorer(split)
+      if data['error']:
+        raise Exception("issue getting explorer baldata",data)
+      else:
+        retval={'bal':dict(data['bal'],**cbdata), 'fresh':split}
+    except Exception as e:
+      print e
+
+  rSetNotUpdateBTC(retval)
+  return retval['bal']
+
+def bc_getbulkbalance_explorer(addresses):
+  retval = {}
+  for address in addresses:
+    retval[address] = bc_getbalance_explorer(address)["bal"]
+  return {"bal": retval, "error": None}
+
 # def bc_getutxo(address, ramount, avail=0):
 #   retval=[]
 #   try:
@@ -120,44 +204,6 @@ def hc_getunspentutxo(address, ramount, avail=0):
 #     else: 
 #       return {"error": "Connection error", "code": e.message}
 
-
-def bc_getpubkey(address):
-  try:
-    r = requests.get('https://blockchain.info/q/pubkeyaddr/'+address)
-
-    if r.status_code == 200:
-      return str(r.text)
-    else:
-      return "error"
-  except:
-    return "error"
-
-def bc_getbalance(address):
-  try:
-    balance=rGet("omniwallet:balances:address:"+str(address))
-    balance=json.loads(balance)
-    if balance['error']:
-      raise LookupError("Not cached")
-  except Exception as e:
-    balance = bc_getbalance_explorer(address)
-    #cache btc balance for 2.5 minutes
-    rSet("omniwallet:balances:address:"+str(address),json.dumps(balance))
-    rExpire("omniwallet:balances:address:"+str(address),expTime)
-  return balance
-
-def bc_getbalance_explorer(address):
-  retval = {}
-  try:
-    r = requests.get('http://127.0.0.1:3006/api/addr/'+address+'?noTxList=1&noCache=1')
-    if r.status_code == 200:
-      balance = r.json()['balanceSat']
-      return {"bal":balance, "error": None}
-    else:
-      return {"bal":0, "error": None}
-  except Exception as e:
-    print e
-    return {"bal":0, "error": None}
-
 # def bc_getbalance_bitgo(address):
 #   try:
 #     r= requests.get('https://www.bitgo.com/api/v1/address/'+address)
@@ -190,56 +236,6 @@ def bc_getbalance_explorer(address):
 #       return {"bal": 0 , "error": "Couldn't get balance"}
 #   except:
 #       return {"bal": 0 , "error": "Couldn't get balance"}
-
-def bc_getbulkbalance(addresses):
-  split=[]
-  retval={}
-  cbdata={}
-  for a in addresses:
-    try:
-      cb=rGet("omniwallet:balances:address:"+str(a))
-      cb=json.loads(cb)
-      if cb['error']:
-        raise LookupError("Not cached")
-      else:
-        cbdata[a]=cb['bal']
-    except Exception as e:
-      split.append(a)
-
-  if len(split)==0:
-    if len(cbdata) > 0:
-      retval={'bal':cbdata, 'fresh':None}
-    else:
-      retval={'bal':{}, 'fresh':None}
-  else:
-    try:
-      data=bc_getbulkbalance_explorer(split)
-      if data['error']:
-        raise Exception("issue getting explorer baldata",data)
-      else:
-        retval={'bal':dict(data['bal'],**cbdata), 'fresh':split}
-    except Exception as e:
-      print e
-
-  rSetNotUpdateBTC(retval)
-  return retval['bal']
-
-def bc_getbulkbalance_explorer(addresses):
-  retval = {}
-  for address in addresses:
-    try:
-      r = requests.get('http://127.0.0.1:3006/api/addr/'+address+'?noTxList=1&noCache=1')
-      if r.status_code == 200:
-        response = r.json()
-        retval[address] = response['balanceSat']
-      else:
-        retval[address] = 0
-    except Exception as e:
-      print e
-      retval[address] = 0
-
-  return {"bal": retval, "error": None}
-
       
 # def bc_getbulkbalance_blockonomics(addresses):
 #   formatted=""

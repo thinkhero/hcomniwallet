@@ -11,13 +11,13 @@ angular.module("omniConfig")
     if(TESTNET)
       return "https://testnet-explorer.h.cash/explorer/tx/";
     else
-      return "https://www.blocktrail.com/BTC/tx/";
+      return "https://explorer.h.cash/explorer/tx/";
   }])
   .factory("ADDRESS_EXPLORER_URL",["TESTNET", function AddressExplorerUrlFactory(TESTNET){
     if(TESTNET)
-      return "https://testnet-explorer.h.cash/address/info/";
+      return "http://testnet-hcomni-explorer.h.cash/address/";
     else
-      return "https://omniexplorer.info/lookupadd.aspx?address=";
+      return "http://hcomni-explorer.h.cash/address/";
   }])
   .factory("EXODUS_ADDRESS",["TESTNET", function AddressExplorerUrlFactory(TESTNET){
     if(TESTNET)

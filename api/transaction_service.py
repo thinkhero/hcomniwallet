@@ -104,7 +104,7 @@ def getaddress():
                             atx.AddressRole, atx.BalanceAvailableCreditDebit,
                             sp.PropertyData
                       from transactions as t, addressesintxs atx, smartproperties sp
-                      where t.txdbserialnum = atx.txdbserialnum and t.txdbserialnum = sp.createtxdbserialnum and atx.address=%s and t.txdbserialnum >0
+                      where t.txdbserialnum = atx.txdbserialnum and sp.PropertyID = atx.PropertyID and atx.address=%s and t.txdbserialnum >0
                       and sp.Protocol != 'Fiat'
                       order by t.txdbserialnum DESC""", [address])
     transactions = []

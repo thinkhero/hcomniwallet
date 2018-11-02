@@ -81,7 +81,7 @@ function Login($injector, $scope, $http, $location, $modalInstance, $q, Account,
         angular.extend($scope,error);
       });
     } else {
-      if (!login.mfachecked) login.mfatoken = "null";
+
       Account.login(login.uuid,login.password,login.mfatoken).then(function(wallet){
           $modalInstance.close()
           $location.path('/wallet');

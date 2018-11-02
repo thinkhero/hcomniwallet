@@ -1687,3 +1687,29 @@ i.icon-l{
     padding: 5px;
     text-align: center;
 }
+
+
+
+
+
+/*
+hope
+*/
+
+.navbar-main {
+	background-color: #8839D1;
+}
+.navbar-main .navbar-nav > li > a {
+	color: #fff;
+}
+.navbar-main-tier1 {
+	background-color: #5d2995;
+}
+.navbar .divider-vertical {
+	border-right-color: #fff;
+}
+
+#footer {
+	height: auto;
+	background-color: #8839D1;
+}

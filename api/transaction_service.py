@@ -100,15 +100,13 @@ def getaddress():
         address = str(re.sub(r'\W+', '', request.form['addr'] ) ) #check alphanumeric
     except ValueError:
         abort(make_response('This endpoint only consumes valid input', 400))
-    print ">>> 1"
     ROWS=dbSelect("""select t.TxHash, t.TxType, t.TxRecvTime, t.TxState,
                             atx.AddressRole, atx.BalanceAvailableCreditDebit,
                             sp.PropertyData
                       from transactions as t, addressesintxs atx, smartproperties sp
-                      where t.txdbserialnum = atx.txdbserialnum and sp.PropertyID = atx.PropertyID and atx.address=%s and t.txdbserialnum >0
+                      where t.txdbserialnum = atx.txdbserialnum and t.txdbserialnum = sp.createtxdbserialnum and atx.address=%s and t.txdbserialnum >0
                       and sp.Protocol != 'Fiat'
                       order by t.txdbserialnum DESC""", [address])
-    print ">>> 2"
     transactions = []
 
     if len(ROWS) > 0:
@@ -211,13 +209,13 @@ def gettransaction(hash_id):
     }
     print "transaction_service:ret===",ret
     if txType not in [-22,21,25,26,27,28]: #Dex purchases don't have these fields
-      ret['currencyId'] = txJson['propertyid']
-      ret['currency_str'] = 'Omni' if txJson['propertyid'] == 1 else 'Test Omni' if txJson['propertyid'] == 2 else "Smart Property"
+      ret['currencyId'] = txJson['propertyid'] if 'propertyid' in txJson else ''
+      ret['currency_str'] = '' if 'propertyid' not in txJson else 'Omni' if txJson['propertyid'] == 1 else 'Test Omni' if txJson['propertyid'] == 2 else "Smart Property"
       ret['invalid'] = not txValid
       ret['amount'] = str(txJson['amount'])
       ret['formatted_amount'] = txJson['amount']
-      ret['divisible'] = txJson['divisible']
-      ret['fee'] = txJson['fee']
+      ret['divisible'] = txJson['divisible'] if 'divisible' in txJson else ''
+      ret['fee'] = txJson['fee'] if 'fee' in txJson else ''
       ret['tx_type_str'] = txJson['type']
 
     if txType == 0 and txValid:

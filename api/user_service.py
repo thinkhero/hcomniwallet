@@ -340,7 +340,7 @@ def generate_mfa():
     uuid = str(validate_uuid)
     secret=pyotp.random_base32()
     totp=pyotp.TOTP(secret)
-    uri="Omniwallet:"+str(time.strftime("%d-%m-%Y:"))+str(uuid)
+    uri="Hcomniwallet:"+str(time.strftime("%d-%m-%Y:"))+str(uuid)
     prov=totp.provisioning_uri(uri)
     response = {
       'error': False,

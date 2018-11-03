@@ -1,8 +1,6 @@
 <div class="main-container" ng-controller="HomeController">
   <div class="row mobile-centered om-title homepage-welcome">{{ 'HOMEPAGE.WELCOME' | translate }}</div>
-  <div class="row visible-xs text-center"><button type="button" class="btn btn-secondary" ng-click="modalManager.openCreateModal()">{{ 'COMMON.CREATEWALLET' | translate }}</button></div>
-  <div class="row visible-xs text-center"><button type="button" class="btn btn-main" ng-click="modalManager.openLoginModal()">{{ 'COMMON.LOGIN' | translate }}</button></div>
-  <div class="row visible-xs text-center"><a href="/" ng-click="modalManager.openBalanceCheckModal()">{{ 'HOMEPAGE.BALANCECHECK' | translate }}</a></div>
+  <div class="row visible-xs text-center btns1"><button type="button" class="btn btn-secondary" ng-click="modalManager.openCreateModal()">{{ 'COMMON.CREATEWALLET' | translate }}</button><button type="button" class="btn btn-main" ng-click="modalManager.openLoginModal()">{{ 'COMMON.LOGIN' | translate }}</button><a href="/" ng-click="modalManager.openBalanceCheckModal()">{{ 'HOMEPAGE.BALANCECHECK' | translate }}</a></div>
 
   <div class="hidden-xs homepage-form">
     <form role="form" name="addressentry">

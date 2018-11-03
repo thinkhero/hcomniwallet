@@ -262,7 +262,6 @@ def login():
   public_key = base64.b64decode(request.form['public_key'].encode('UTF-8'))
   nonce = request.form['nonce']
   session = ws.hashlib.sha256(config.SESSION_SECRET + uuid).hexdigest()
-
   if config.LOCALDEVBYPASSDB:
     session_pow_challenge = session + "_pow_challenge"
     if session_pow_challenge not in session_store:
@@ -277,7 +276,6 @@ def login():
     if not exists(uuid):
       print 'Wallet not found'
       abort(403)
-
     mfa_verified, mfa = verify_mfa(uuid,mfatoken)
     if not mfa_verified:
       print 'MFA token incorrect'
@@ -340,7 +338,7 @@ def generate_mfa():
     uuid = str(validate_uuid)
     secret=pyotp.random_base32()
     totp=pyotp.TOTP(secret)
-    uri="Omniwallet:"+str(time.strftime("%d-%m-%Y:"))+str(uuid)
+    uri="Hcomniwallet:"+str(time.strftime("%d-%m-%Y:"))+str(uuid)
     prov=totp.provisioning_uri(uri)
     response = {
       'error': False,
@@ -619,10 +617,8 @@ def welcome_email(user_email, wallet, uuid):
     #Encoders.encode_base64(wfile)
     #wfile.add_header('Content-Disposition', 'attachment', filename=uuid+'.json')
     #msg.attach(wfile)
-    smtp = smtplib.SMTP(config.SMTPDOMAIN, config.SMTPPORT)
+    smtp = smtplib.SMTP_SSL(config.SMTPDOMAIN, config.SMTPPORT)
     if config.SMTPUSER is not None and config.SMTPPASS is not None:
-      if config.SMTPSTARTTLS:
-        smtp.starttls()
       smtp.login(config.SMTPUSER, config.SMTPPASS)
     smtp.sendmail(email_from, user_email, msg.as_string())
     smtp.close()

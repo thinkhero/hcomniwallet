@@ -243,7 +243,7 @@ def gettransaction(hash_id):
       print "mpData['name']==",mpData['name']
       ret['propertyName'] = dehexify( mpData['name'] )
       ret['propertyCategory'] = dehexify( mpData['category'] )
-      ret['propertyData'] = dehexify( mpData['data'] )
+      ret['propertyData'] = mpData['data']
       ret['propertySubcategory'] = dehexify( mpData['subcategory'] )
       ret['propertyUrl'] = dehexify( mpData['url'] )
 

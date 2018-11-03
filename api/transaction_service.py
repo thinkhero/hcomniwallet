@@ -212,8 +212,8 @@ def gettransaction(hash_id):
       ret['currencyId'] = txJson['propertyid'] if 'propertyid' in txJson else ''
       ret['currency_str'] = '' if 'propertyid' not in txJson else 'Omni' if txJson['propertyid'] == 1 else 'Test Omni' if txJson['propertyid'] == 2 else "Smart Property"
       ret['invalid'] = not txValid
-      ret['amount'] = str(txJson['amount'])
-      ret['formatted_amount'] = txJson['amount']
+      ret['amount'] = str(txJson['amount']) if 'amount' in txJson else ''
+      ret['formatted_amount'] = txJson['amount'] if 'amount' in txJson else ''
       ret['divisible'] = txJson['divisible'] if 'divisible' in txJson else ''
       ret['fee'] = txJson['fee'] if 'fee' in txJson else ''
       ret['tx_type_str'] = txJson['type']
@@ -236,14 +236,14 @@ def gettransaction(hash_id):
       try:
         mpData = json.loads(ROWS[0][-3])
       except TypeError:
-	print "except"
+        print "except"
         mpData = ROWS[0][-3]
       print "mpData",mpData
       ret['previous_property_id'] = "(null)" #TODO FIXME
       print "mpData['name']==",mpData['name']
       ret['propertyName'] = dehexify( mpData['name'] )
       ret['propertyCategory'] = dehexify( mpData['category'] )
-      ret['propertyData'] = dehexify( mpData['data'] )
+      ret['propertyData'] = mpData['data']
       ret['propertySubcategory'] = dehexify( mpData['subcategory'] )
       ret['propertyUrl'] = dehexify( mpData['url'] )
 

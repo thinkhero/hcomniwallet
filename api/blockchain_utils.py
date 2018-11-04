@@ -27,7 +27,7 @@ def hc_getunspentutxo(address, ramount, avail=0):
           retval.append(tx)
           if avail >= ramount:
             return {"avail": avail, "utxos": retval, "error": "none"}
-      return {"avail": avail, "error": "Low balance error"}
+      return {"avail": avail, "error": "Low balance error, account balance must be greater than " + str(ramount)}
     else:
       return {"error": "Connection error", "code": r.status_code}
   except Exception as e:

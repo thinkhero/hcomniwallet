@@ -774,7 +774,7 @@ angular.module("omniServices")
               try {
                 //var eckey = new Bitcoin.ECKey(address);
                 //var addr = eckey.getBitcoinAddress().toString();
-                bitcore.PrivateKey.isValid(privkey, TESTNET ? "hcdtestnet" : "hcdlivenet");
+                bitcore.PrivateKey(privkey, TESTNET ? "hcdtestnet" : "hcdlivenet");
                 return true;
               } catch (e) {
                 return false;

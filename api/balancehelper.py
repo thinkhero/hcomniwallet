@@ -75,14 +75,14 @@ def get_balancedata(address):
         #res['reserved_balance'] = ('%.8f' % float(balrow[5])).rstrip('0').rstrip('.')
         balance_data['balance'].append(res)
 
-    #check if we got BTC data from DB, if not trigger manually add
+    #check if we got HC data from DB, if not trigger manually add
     addbtc=True
     for x in balance_data['balance']:
-      if "BTC" in x['symbol']:
+      if "HC" in x['symbol']:
         addbtc=False
 
     if addbtc:
-      btc_balance = { 'symbol': 'BTC', 'divisible': True, 'id' : 0, 'error' : False }
+      btc_balance = { 'symbol': 'HC', 'divisible': True, 'id' : 0, 'error' : False }
       if err != None or out == '':
         #btc_balance[ 'value' ] = str(long(-555))
         btc_balance[ 'value' ] = str(long(0))
@@ -153,7 +153,7 @@ def get_bulkbalancedata(addresses):
 
       for balrow in ROWS:
         cID = str(int(balrow[0])) #currency id
-        sym_t = ('BTC' if cID == '0' else ('OMNI' if cID == '1' else ('T-OMNI' if cID == '2' else 'SP' + cID) ) ) #symbol template
+        sym_t = ('HC' if cID == '0' else ('OMNI' if cID == '1' else ('T-OMNI' if cID == '2' else 'SP' + cID) ) ) #symbol template
         #1 = new indivisible property, 2=new divisible property (per spec)
         divi = True if int(balrow[1]) == 2 else False
         res = { 'symbol' : sym_t, 'divisible' : divi, 'id' : cID, 'name': balrow[5] }
@@ -188,14 +188,14 @@ def get_bulkbalancedata(addresses):
         #res['reserved_balance'] = ('%.8f' % float(balrow[5])).rstrip('0').rstrip('.')
         balance_data['balance'].append(res)
 
-      #check if we got BTC data from DB, if not trigger manually add
+      #check if we got HC data from DB, if not trigger manually add
       addbtc=True
       for x in balance_data['balance']:
-        if "BTC" in x['symbol']:
+        if "HC" in x['symbol']:
           addbtc=False
 
       if addbtc:
-        btc_balance = { 'symbol': 'BTC', 'divisible': True, 'id' : 0 ,'error' : False}
+        btc_balance = { 'symbol': 'HC', 'divisible': True, 'id' : 0 ,'error' : False}
         if err != None or out == '':
           #btc_balance[ 'value' ] = str(long(-555))
           btc_balance[ 'value' ] = str(long(0))

@@ -5,7 +5,7 @@ from blockchain_utils import *
 def get_balancedata(address):
     addr = re.sub(r'\W+', '', address) #check alphanumeric
     ROWS=dbSelect("""select
-                       f1.propertyid, sp.propertytype, f1.balanceavailable, f1.pendingpos, f1.pendingneg
+                       f1.propertyid, sp.propertytype, f1.balanceavailable, f1.pendingpos, f1.pendingneg, sp.propertyname, 
                      from
                        (select
                           COALESCE(s1.propertyid,s2.propertyid) as propertyid, COALESCE(s1.balanceavailable,0) as balanceavailable,
@@ -38,10 +38,10 @@ def get_balancedata(address):
     err = ret['error']
     for balrow in ROWS:
         cID = str(int(balrow[0])) #currency id
-        sym_t = ('BTC' if cID == '0' else ('OMNI' if cID == '1' else ('T-OMNI' if cID == '2' else 'SP' + cID) ) ) #symbol template
+        sym_t = ('HC' if cID == '0' else ('OMNI' if cID == '1' else ('T-OMNI' if cID == '2' else 'SP' + cID) ) ) #symbol template
         #1 = new indivisible property, 2=new divisible property (per spec)
         divi = True if int(balrow[1]) == 2 else False
-        res = { 'symbol' : sym_t, 'divisible' : divi, 'id' : cID }
+        res = { 'symbol' : sym_t, 'divisible' : divi, 'id' : cID, 'name': balrow[5] }
         res['pendingpos'] = str(long(balrow[3]))
         res['pendingneg'] = str(long(balrow[4]))
         if cID == '0':
@@ -112,7 +112,7 @@ def get_bulkbalancedata(addresses):
     for address in addresses:
       addr = re.sub(r'\W+', '', address) #check alphanumeric
       ROWS=dbSelect("""select
-                       f1.propertyid, sp.propertytype, f1.balanceavailable, f1.pendingpos, f1.pendingneg
+                       f1.propertyid, sp.propertytype, f1.balanceavailable, f1.pendingpos, f1.pendingneg, sp.propertyname, 
                      from
                        (select
                           COALESCE(s1.propertyid,s2.propertyid) as propertyid, COALESCE(s1.balanceavailable,0) as balanceavailable,
@@ -156,7 +156,7 @@ def get_bulkbalancedata(addresses):
         sym_t = ('BTC' if cID == '0' else ('OMNI' if cID == '1' else ('T-OMNI' if cID == '2' else 'SP' + cID) ) ) #symbol template
         #1 = new indivisible property, 2=new divisible property (per spec)
         divi = True if int(balrow[1]) == 2 else False
-        res = { 'symbol' : sym_t, 'divisible' : divi, 'id' : cID }
+        res = { 'symbol' : sym_t, 'divisible' : divi, 'id' : cID, 'name': balrow[5] }
         res['pendingpos'] = str(long(balrow[3]))
         res['pendingneg'] = str(long(balrow[4]))
         if cID == '0':

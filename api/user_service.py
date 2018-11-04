@@ -535,19 +535,19 @@ def welcome_email(user_email, wallet, uuid):
     msg = MIMEMultipart('alternative')
     msg['From'] = email_from
     msg['To'] = user_email
-    msg['Subject'] = "Welcome to Omniwallet"
+    msg['Subject'] = "Welcome to HcOmniwallet"
 
-    text = ('Welcome To Omniwallet!\n'
+    text = ('Welcome To HcOmniwallet!\n'
             '\n'
             'Thank you for creating a new wallet and choosing to join the exciting world of cryptocurrency.\n'
-            'While we know you are eager to get started, this email contains important information about your new Omniwallet.\n'
+            'While we know you are eager to get started, this email contains important information about your new HcOmniwallet.\n'
             'So please take a moment to read through it completely.\n'
              '\n'
             'Your Wallet Login Details'
             'This is your Wallet ID: '+str(uuid)+'\n'
             'Never share your Wallet ID or Password with anyone. Be sure to keep them safe and stored separately for security.\n\n'
             'This is your unique Login Link: https://'+str(email_domain)+'/login/'+str(uuid)+'\n'
-            'Bookmark this, you can use it to login directly to your Omniwallet with your password.\n'
+            'Bookmark this, you can use it to login directly to your HcOmniwallet with your password.\n'
             '\n'
             'Omniwallet NEVER STORES Your Password.\n'
             'This means you need your password to access your wallet and the private keys within.\n'
@@ -567,13 +567,13 @@ def welcome_email(user_email, wallet, uuid):
             'This as well as many more questions/answers are available on our FAQ Page: https://'+str(email_domain)+'/about/faq \n'
             'If you have any questions please feel free to reach out to us using the information on our Contact Us page: https://'+str(email_domain)+'/about/contact \n'
             '\n'
-            'Sincerely, \n The Omniwallet Team' )
+            'Sincerely, \n The HCASH Team' )
 
     html = ('<html><head></head><body style="background-color:rgba(234, 235, 236, 0.43);">'
-            '<img src="https://'+str(email_domain)+'/assets/img/logo.png"><h1><font color="#034F92">Welcome To Omniwallet!</font></h1>'
+            '<img src="https://'+str(email_domain)+'/assets/img/logo.png"><h1><font color="#034F92">Welcome To HcOmniwallet!</font></h1>'
             '<p>'
             'Thank you for creating a new wallet and choosing to join the exciting world of cryptocurrency.<br>'
-            'While we know you are eager to get started, this email contains important information about your new Omniwallet.<br>'
+            'While we know you are eager to get started, this email contains important information about your new HcOmniwallet.<br>'
             'So please take a moment to read through it completely.<br>'
             '</p>'
             '<h2><font color="#034F92">Your Wallet Login Details</font></h2>'
@@ -581,9 +581,9 @@ def welcome_email(user_email, wallet, uuid):
             'This is your <b>Wallet ID:</b> '+str(uuid)+'<br>'
             'Never share your Wallet ID or Password with anyone. Be sure to keep them safe and stored separately for security.<br><br>'
             'This is your unique <b>Login Link:</b> <a href="https://'+str(email_domain)+'/login/'+str(uuid)+'">https://'+str(email_domain)+'/login/'+str(uuid)+'</a><br>'
-            'Bookmark this, you can use it to login directly to your Omniwallet with your password.<br>'
+            'Bookmark this, you can use it to login directly to your HcOmniwallet with your password.<br>'
             '</p><p>'
-            '<strong>Omniwallet Never Stores Your Password.</strong><br>'
+            '<strong>HcOmniwallet Never Stores Your Password.</strong><br>'
             'This means you need your password to access your wallet and the private keys within.<br>'
             'If you lose or forget your password there is nothing we can do to recover it.<br>'
             'This may result in the loss of funds in any wallet addresses which have not been Backed Up!<br><br>'
@@ -602,7 +602,7 @@ def welcome_email(user_email, wallet, uuid):
             'This as well as many more questions/answers are available on our <a href="https://'+str(email_domain)+'/about/faq">FAQ</a> page.<br>'
             'If you have any questions please feel free to reach out to us using the information on our <a href="https://'+str(email_domain)+'/about/contact">Contact Us</a> page.<br>'
             '</p><p>'
-            'Sincerely, <br><i> The Omniwallet Team</i>'
+            'Sincerely, <br><i> The HCASH Team</i>'
             '</p></body></html>'  )
 
     part1 = MIMEText(text, 'plain')

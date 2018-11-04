@@ -31,7 +31,7 @@ def send_form_response(response_dict):
     from_addr=response_dict['from_address'][0]
     amount=response_dict['amount'][0]
     hc_fee=response_dict['fee'][0]
-    dirty_txes = hc_getunspentutxo(from_addr, Decimal(amount) + Decimal(fee)*1e8)
+    dirty_txes = hc_getunspentutxo(from_addr, Decimal(amount) + Decimal(hc_fee)*1e8)
     if dirty_txes["error"] != "none":
         return (None, dirty_txes["error"])
     else:

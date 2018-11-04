@@ -82,7 +82,7 @@ def get_balancedata(address):
         addbtc=False
 
     if addbtc:
-      btc_balance = { 'symbol': 'BTC', 'divisible': True, 'id' : 0, 'error' : False }
+      btc_balance = { 'symbol': 'BTC', 'divisible': True, 'id' : 0, 'error' : False, 'name': "HC" }
       if err != None or out == '':
         #btc_balance[ 'value' ] = str(long(-555))
         btc_balance[ 'value' ] = str(long(0))
@@ -195,7 +195,7 @@ def get_bulkbalancedata(addresses):
           addbtc=False
 
       if addbtc:
-        btc_balance = { 'symbol': 'BTC', 'divisible': True, 'id' : 0 ,'error' : False}
+        btc_balance = { 'symbol': 'BTC', 'divisible': True, 'id' : 0 ,'error' : False, 'name': 'HC' }
         if err != None or out == '':
           #btc_balance[ 'value' ] = str(long(-555))
           btc_balance[ 'value' ] = str(long(0))

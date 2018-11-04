@@ -25,7 +25,7 @@ def hc_getunspentutxo(address, ramount, avail=0):
         if not isUsed and not coinbaseHold and txUsed['confirmations'] > 0 and not multisigSkip:
           avail += tx['amount']*1e8
           retval.append(tx)
-          if avail > ramount:
+          if avail >= ramount:
             return {"avail": avail, "utxos": retval, "error": "none"}
       return {"avail": avail, "error": "Low balance error"}
     else:

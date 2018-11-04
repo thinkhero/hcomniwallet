@@ -53,7 +53,7 @@ class OmniTransaction:
         rawtx = None
         fee_total = Decimal(self.fee)
 
-        dirty_txes = hc_getunspentutxo(self.rawdata["transaction_from"], int(float(self.rawdata["fee"])*float(1e8)))
+        dirty_txes = hc_getunspentutxo(self.rawdata["transaction_from"], int(float(self.rawdata["fee"])*float(1e8)) + 100000)
         if dirty_txes["error"] != "none":
             return {'status':503, 'error':dirty_txes["error"]}
         else:

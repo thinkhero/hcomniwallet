@@ -5,7 +5,7 @@ from blockchain_utils import *
 def get_balancedata(address):
     addr = re.sub(r'\W+', '', address) #check alphanumeric
     ROWS=dbSelect("""select
-                       f1.propertyid, sp.propertytype, f1.balanceavailable, f1.pendingpos, f1.pendingneg, sp.propertyname, 
+                       f1.propertyid, sp.propertytype, f1.balanceavailable, f1.pendingpos, f1.pendingneg, sp.propertyname
                      from
                        (select
                           COALESCE(s1.propertyid,s2.propertyid) as propertyid, COALESCE(s1.balanceavailable,0) as balanceavailable,
@@ -112,7 +112,7 @@ def get_bulkbalancedata(addresses):
     for address in addresses:
       addr = re.sub(r'\W+', '', address) #check alphanumeric
       ROWS=dbSelect("""select
-                       f1.propertyid, sp.propertytype, f1.balanceavailable, f1.pendingpos, f1.pendingneg, sp.propertyname, 
+                       f1.propertyid, sp.propertytype, f1.balanceavailable, f1.pendingpos, f1.pendingneg, sp.propertyname
                      from
                        (select
                           COALESCE(s1.propertyid,s2.propertyid) as propertyid, COALESCE(s1.balanceavailable,0) as balanceavailable,

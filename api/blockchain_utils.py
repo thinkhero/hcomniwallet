@@ -62,10 +62,10 @@ def bc_getbalance_explorer(address):
           balance += tx['amount']*1e8
       return {"bal":balance, "error": None}
     else:
-      return {"bal":0, "error": None}
+      return {"bal":0, "error": r.status_code}
   except Exception as e:
     print e
-    return {"bal":0, "error": None}
+    return {"bal":0, "error": e}
 
 def bc_getbulkbalance(addresses):
   split=[]

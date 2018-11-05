@@ -30,7 +30,7 @@
               <label>
                 <span>{{ 'COMMON.SEND' | translate}} </span>
                 <span ng-if="accepted.symbol == 'BTC'">
-                  {{sendByValue ? userCurrency : 'BTC'}}
+                  {{sendByValue ? userCurrency : 'HC'}}
                 </span>
                 <span ng-if="propertyDesired.symbol != 'BTC'">
                   {{ 'WALLET.SEND.AMOUNT' | translate}}
@@ -50,7 +50,7 @@
                 <input id="amount" name="amount" type="number" ng-model="sendAmount" class="form-control" value="sendAmount"
                     placeholder="{{propertyDesired.divisible ? '1.00000000' : '1'}}" step="{{propertyDesired.divisible ? 0.00000001 : 1}}" 
                     min="{{propertyDesired.divisible ? 0.00000001 : 1}}" ng-change="calculateAmount()" required>
-                <div class="hint">({{sendByValue ? ((sendAmount || 0) / propertyDesired.price).toFixed(4) : ((sendAmount || 0) * propertyDesired.price).toFixed(2)}} {{sendByValue ? userCurrency : 'BTC'}})</div>
+                <div class="hint">({{sendByValue ? ((sendAmount || 0) / propertyDesired.price).toFixed(4) : ((sendAmount || 0) * propertyDesired.price).toFixed(2)}} {{sendByValue ? userCurrency : 'HC'}})</div>
               </div>
               <input ng-show="propertyDesired.symbol != 'BTC'" id="amount" name="amount" type="number" ng-model="sendAmount" 
                     class="form-control" value="sendAmount" ng-change="calculateAmount()"

@@ -12,27 +12,11 @@ http_status = '200 OK'
 
 def getRPCconn():
     USER=getpass.getuser()
+    conn = bitcoinrpc.connect_to_local()
     try:
-        with open('/home/'+USER+'/.hcwallet/omni.conf') as fp:
-            RPCPORT="8332"
-            RPCHOST="localhost"
-            for line in fp:
-                #print line
-                if line.split('=')[0] == "rpcuser":
-                    RPCUSER=line.split('=')[1].strip()
-                elif line.split('=')[0] == "rpcpassword":
-                    RPCPASS=line.split('=')[1].strip()
-                elif line.split('=')[0] == "rpcconnect":
-                    RPCHOST=line.split('=')[1].strip()
-                elif line.split('=')[0] == "rpcport":
-                    RPCPORT=line.split('=')[1].strip()
-                elif line.split('=')[0] == "rpcssl":
-                    if line.split('=')[1].strip() == "1":
-                        RPCSSL=True
-                    else:
-                        RPCSSL=False
-    except IOError as e:
-        response='{"error": "Unable to load bitcoin config file. Please Notify Site Administrator"}'
+        conn.getblockcount()
+    except StandardError:
+        response='{"error": "Connection to bitcoind server unavailable. Please try agian in 5 minutes"}'
         return response
     return conn
 

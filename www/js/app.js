@@ -11,7 +11,7 @@ angular.module("omniConfig")
     if(TESTNET)
       return "https://testnet-explorer.h.cash/explorer/tx/";
     else
-      return "https://explorer.h.cash/explorer/tx/";
+      return "https://hc-explorer.h.cash/explorer/tx/";
   }])
   .factory("ADDRESS_EXPLORER_URL",["TESTNET", function AddressExplorerUrlFactory(TESTNET){
     if(TESTNET)

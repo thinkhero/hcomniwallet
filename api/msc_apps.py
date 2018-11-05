@@ -17,7 +17,7 @@ def getRPCconn():
     	conn.getblockcount()
     except StandardError:
     	try:
-            with open('/home/'+USER+'/.bitcoin/bitcoin.conf') as fp:
+            with open('/home/'+USER+'/.hcwallet/omni.conf') as fp:
                 RPCPORT="8332"
                 RPCHOST="localhost"
                 for line in fp:

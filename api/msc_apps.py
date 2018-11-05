@@ -26,11 +26,11 @@ def getRPCconn():
                     RPCHOST=line.split('=')[1].strip()
                 elif line.split('=')[0] == "rpcport":
                     RPCPORT=line.split('=')[1].strip()
-        elif line.split('=')[0] == "rpcssl":
+                elif line.split('=')[0] == "rpcssl":
                     if line.split('=')[1].strip() == "1":
-            RPCSSL="True"
-        else:
-            RPCSSL="False"
+                        RPCSSL=True
+                    else:
+                        RPCSSL=False
     except IOError as e:
         response='{"error": "Unable to load bitcoin config file. Please Notify Site Administrator"}'
         return response
